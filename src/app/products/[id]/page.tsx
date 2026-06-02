@@ -18,7 +18,7 @@ export default async function ProductPage({
 
   // Fetch product and related products in parallel
   const [product, relatedResult] = await Promise.all([
-    adapter.getProduct(id),
+    adapter.getProductByHandle(id),
     adapter.listProducts({ limit: 4 }), // Just get some for now
   ]);
 

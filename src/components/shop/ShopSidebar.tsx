@@ -88,7 +88,7 @@ export default function ShopSidebar({
             })
           }
           renderTrack={({ props, children }) => {
-            const { key, ...rest } = props;
+            const { key, ...rest } = props as any;
 
             return (
               <div

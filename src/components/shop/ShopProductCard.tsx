@@ -56,7 +56,7 @@ export default function ShopProductCard({
     <>
       <div className="shop-card" style={styles.card}>
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${product.handle}`}
           style={styles.link}
         >
           <div style={styles.imageWrapper}>

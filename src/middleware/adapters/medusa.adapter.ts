@@ -170,9 +170,9 @@ export class MedusaAdapter implements ICommerceAdapter {
     return this.mapCart(cart);
   }
 
-  async removeItemFromCart(cartId: string, itemId: string): Promise<Cart> {
-    const { cart } = await sdk.store.cart.deleteLineItem(cartId, itemId);
-    return this.mapCart(cart);
+  async removeItemFromCart(cart_id: string, item_id: string): Promise<Cart> {
+    const { parent: cart } = await sdk.store.cart.deleteLineItem(cart_id, item_id);
+    return this.mapCart(cart as any);
   }
 
   async listOrders(customerId: string): Promise<Order[]> {
@@ -223,16 +223,16 @@ export class MedusaAdapter implements ICommerceAdapter {
           acc[opt.option_id] = opt.value;
           return acc;
         }, {}),
-        created_at: v.created_at,
-        updated_at: v.updated_at,
+        created_at: v.created_at || undefined,
+        updated_at: v.updated_at || undefined,
       })) || [],
       options: p.options?.map((o: any) => ({
         id: o.id,
         title: o.title,
         values: o.values?.map((v: any) => v.value) || [],
       })),
-      created_at: p.created_at,
-      updated_at: p.updated_at,
+      created_at: p.created_at || undefined,
+      updated_at: p.updated_at || undefined,
     };
   }
 
@@ -258,8 +258,8 @@ export class MedusaAdapter implements ICommerceAdapter {
       total: c.total,
       shipping_total: (c as any).shipping_total || 0,
       tax_total: (c as any).tax_total || 0,
-      created_at: c.created_at,
-      updated_at: c.updated_at,
+      created_at: c.created_at ? String(c.created_at) : undefined,
+      updated_at: c.updated_at ? String(c.updated_at) : undefined,
     };
   }
 
@@ -281,9 +281,9 @@ export class MedusaAdapter implements ICommerceAdapter {
       total: o.total,
       currency_code: o.currency_code,
       customer_id: o.customer_id || undefined,
-      email: o.email,
-      created_at: o.created_at,
-      updated_at: o.updated_at,
+      email: o.email || "",
+      created_at: o.created_at ? String(o.created_at) : undefined,
+      updated_at: o.updated_at ? String(o.updated_at) : undefined,
     };
   }
 

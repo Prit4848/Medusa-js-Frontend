@@ -60,7 +60,7 @@ export default function QuickViewModal({
 
         <div className="right">
           <Link
-            href={`/products/${product.id}`}
+            href={`/products/${product.handle}`}
             className="topLink"
           >
             More about product →

@@ -16,7 +16,7 @@ export default function RelatedProducts({
         {products.map((item) => (
           <Link
             key={item.id}
-            href={`/products/${item.id}`}
+            href={`/products/${item.handle}`}
           >
             <div>
               <div className="bg-[#f7f6f4] aspect-square relative mb-6">
