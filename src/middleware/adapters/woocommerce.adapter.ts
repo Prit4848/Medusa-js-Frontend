@@ -7,6 +7,23 @@ export class WooCommerceAdapter implements ICommerceAdapter {
     return { products: [], count: 0 };
   }
 
+  async listCategories(): Promise<any[]> {
+    return [];
+  }
+
+  async listCollections(): Promise<any[]> {
+    return [];
+  }
+
+  async getFilters(): Promise<any> {
+    return {
+      categories: [],
+      collections: [],
+      priceRange: { min: 0, max: 0, currency_code: "USD" },
+      availability: ["in_stock", "out_of_stock"],
+    };
+  }
+
   async getProduct(id: string, query?: any): Promise<Product | null> {
     // Implement WooCommerce REST API call
     return null;

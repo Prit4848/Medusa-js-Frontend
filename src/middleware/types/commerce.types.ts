@@ -1,3 +1,27 @@
+export interface ProductCategory {
+  id: string;
+  name: string;
+  handle: string;
+  description?: string;
+}
+
+export interface ProductCollection {
+  id: string;
+  title: string;
+  handle: string;
+}
+
+export interface CommerceFilters {
+  categories: ProductCategory[];
+  collections: ProductCollection[];
+  priceRange: {
+    min: number;
+    max: number;
+    currency_code: string;
+  };
+  availability: string[];
+}
+
 export interface Product {
   id: string;
   title: string;

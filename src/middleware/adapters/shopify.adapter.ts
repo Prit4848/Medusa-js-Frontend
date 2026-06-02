@@ -1,5 +1,5 @@
 import { ICommerceAdapter } from "./adapter.interface";
-import { Product, Cart, Order, Customer } from "../types/commerce.types";
+import { Product, Cart, Order, Customer, ProductCategory, ProductCollection, CommerceFilters } from "../types/commerce.types";
 
 export class ShopifyAdapter implements ICommerceAdapter {
   private domain: string;
@@ -34,58 +34,168 @@ export class ShopifyAdapter implements ICommerceAdapter {
 
   async listProducts(query?: any): Promise<{ products: Product[]; count: number }> {
     const limit = query?.limit || 12;
-    const shopifyQuery = `
-      query getProducts($first: Int!) {
-        products(first: $first) {
+    
+    let shopifyQuery = "";
+    let variables: any = { first: limit };
+
+    // If category_id (Shopify collection) is provided, fetch via collection
+    if (query?.category_id || query?.collection_id) {
+      const collectionId = query.category_id || query.collection_id;
+      shopifyQuery = `
+        query getCollectionProducts($id: ID!, $first: Int!) {
+          collection(id: $id) {
+            products(first: $first) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  description
+                  createdAt
+                  updatedAt
+                  images(first: 5) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                  variants(first: 10) {
+                    edges {
+                      node {
+                        id
+                        title
+                        sku
+                        createdAt
+                        updatedAt
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        quantityAvailable
+                        currentlyNotInStock
+                      }
+                    }
+                  }
+                  options {
+                    id
+                    name
+                    values
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+      variables.id = collectionId;
+    } else {
+      shopifyQuery = `
+        query getProducts($first: Int!) {
+          products(first: $first) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                createdAt
+                updatedAt
+                images(first: 5) {
+                  edges {
+                    node {
+                      url
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      sku
+                      createdAt
+                      updatedAt
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      quantityAvailable
+                      currentlyNotInStock
+                    }
+                  }
+                }
+                options {
+                  id
+                  name
+                  values
+                }
+              }
+            }
+          }
+        }
+      `;
+    }
+
+    const data = await this.fetchShopify<any>(shopifyQuery, variables);
+    const productsSource = data.collection ? data.collection.products : data.products;
+    const products = productsSource.edges.map((edge: any) => this.mapProduct(edge.node));
+
+    return {
+      products,
+      count: products.length,
+    };
+  }
+
+  async listCategories(): Promise<ProductCategory[]> {
+    const query = `
+      query getCollections {
+        collections(first: 50) {
           edges {
             node {
               id
               title
               handle
               description
-              createdAt
-              updatedAt
-              images(first: 5) {
-                edges {
-                  node {
-                    url
-                  }
-                }
-              }
-              variants(first: 10) {
-                edges {
-                  node {
-                    id
-                    title
-                    sku
-                    createdAt
-                    updatedAt
-                    price {
-                      amount
-                      currencyCode
-                    }
-                    quantityAvailable
-                    currentlyNotInStock
-                  }
-                }
-              }
-              options {
-                id
-                name
-                values
-              }
             }
           }
         }
       }
     `;
+    const data = await this.fetchShopify<any>(query);
+    return data.collections.edges.map((edge: any) => ({
+      id: edge.node.id,
+      name: edge.node.title,
+      handle: edge.node.handle,
+      description: edge.node.description || undefined,
+    }));
+  }
 
-    const data = await this.fetchShopify<any>(shopifyQuery, { first: limit });
-    const products = data.products.edges.map((edge: any) => this.mapProduct(edge.node));
+  async listCollections(): Promise<ProductCollection[]> {
+    // In Shopify, categories and collections are often mapped to the same thing
+    return this.listCategories().then(cats => cats.map(c => ({
+      id: c.id,
+      title: c.name,
+      handle: c.handle
+    })));
+  }
 
+  async getFilters(): Promise<CommerceFilters> {
+    const categories = await this.listCategories();
+    
     return {
-      products,
-      count: products.length, // Shopify GraphQL pagination is cursor-based, using simple length for now
+      categories,
+      collections: categories.map(c => ({
+        id: c.id,
+        title: c.name,
+        handle: c.handle
+      })),
+      priceRange: {
+        min: 0,
+        max: 1000,
+        currency_code: "USD",
+      },
+      availability: ["in_stock", "out_of_stock"],
     };
   }
 

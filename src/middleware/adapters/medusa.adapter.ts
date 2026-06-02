@@ -6,20 +6,83 @@ import { HttpTypes } from "@medusajs/types";
 export class MedusaAdapter implements ICommerceAdapter {
   async listProducts(query?: any): Promise<{ products: Product[]; count: number }> {
     const region_id = await this.getRegionId(query?.region_id);
+    
+    // Normalize filters for Medusa
+    const medusaQuery: any = {
+      fields: "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,",
+      ...query,
+      region_id,
+    };
+
+    if (query?.category_id) {
+      medusaQuery.category_id = query.category_id;
+    }
+    if (query?.collection_id) {
+      medusaQuery.collection_id = query.collection_id;
+    }
+    if (query?.min_price) {
+      medusaQuery.min_price = query.min_price;
+    }
+    if (query?.max_price) {
+      medusaQuery.max_price = query.max_price;
+    }
+
+    if (query?.availability === "in_stock") {
+      // Simple approximation for Medusa v2
+      medusaQuery["variants.inventory_quantity"] = { $gt: 0 };
+    }
+
     const { products, count } = await sdk.client.fetch<HttpTypes.StoreProductListResponse>(
       `/store/products`,
       {
-        query: {
-          fields: "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,",
-          ...query,
-          region_id,
-        },
+        query: medusaQuery,
       }
     );
 
     return {
       products: products.map((p) => this.mapProduct(p)),
       count,
+    };
+  }
+
+  async listCategories(): Promise<ProductCategory[]> {
+    const { product_categories } = await sdk.client.fetch<HttpTypes.StoreProductCategoryListResponse>(
+      `/store/product-categories`
+    );
+    return product_categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      handle: c.handle,
+      description: c.description || undefined,
+    }));
+  }
+
+  async listCollections(): Promise<ProductCollection[]> {
+    const { collections } = await sdk.client.fetch<HttpTypes.StoreCollectionListResponse>(
+      `/store/collections`
+    );
+    return collections.map((c) => ({
+      id: c.id,
+      title: c.title,
+      handle: c.handle,
+    }));
+  }
+
+  async getFilters(): Promise<CommerceFilters> {
+    const [categories, collections] = await Promise.all([
+      this.listCategories(),
+      this.listCollections(),
+    ]);
+
+    return {
+      categories,
+      collections,
+      priceRange: {
+        min: 0,
+        max: 500,
+        currency_code: "USD",
+      },
+      availability: ["in_stock", "out_of_stock"],
     };
   }
 
