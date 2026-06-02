@@ -51,7 +51,7 @@ export default async function NewArrivals() {
             {products.map((product) => (
               <Link
                 key={product.id}
-                href={`/products/${product.handle}`}
+                href={`/products/${product.id}`}
                 className="group block"
               >
                 {/* Image */}

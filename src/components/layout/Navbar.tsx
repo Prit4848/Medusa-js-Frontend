@@ -1,5 +1,3 @@
-
-
 import Link from 'next/link';
 import {
   Search,
@@ -7,8 +5,18 @@ import {
   ShoppingCart,
   ChevronDown,
 } from 'lucide-react';
+import { retrieveCart } from "@lib/data/cart";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const cart = await retrieveCart();
+
+const cartCount =
+  cart?.items?.reduce(
+    (acc: number, item: any) =>
+      acc + item.quantity,
+    0
+  ) || 0;
+
   return (
     <header className="sticky top-0 z-50 w-full bg-[#f5f5f5] border-b border-gray-200">
       <div className="max-w-[1320px] mx-auto px-6 h-[75px] flex items-center justify-between">
@@ -169,9 +177,21 @@ export default function Navbar() {
             <User size={22} strokeWidth={1.8} />
           </button>
 
-          <button className="hover:text-[#c47c48] transition-colors duration-300">
-            <ShoppingCart size={22} strokeWidth={1.8} />
-          </button>
+          <Link
+            href="/cart"
+            className="relative hover:text-[#c47c48] transition-colors duration-300"
+          >
+            <ShoppingCart
+              size={22}
+              strokeWidth={1.8}
+            />
+
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-3 w-5 h-5 rounded-full bg-[#c97a4a] text-white text-[11px] flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>

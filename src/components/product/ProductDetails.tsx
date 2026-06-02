@@ -1,5 +1,9 @@
+'use client';
 import Image from "next/image";
 import Link from "next/link";
+import { addToCart } from "@/lib/data/cart";
+import toast from "react-hot-toast";
+import { useState } from "react";
 export default function ProductDetails({
     product,
     price,
@@ -7,7 +11,31 @@ export default function ProductDetails({
     product: any;
     price: number;
 }) {
+    const handleAddToCart = async () => {
+        try {
+            const variantId = product?.variants?.[0]?.id;
+
+            if (!variantId) {
+                console.error("No variant found");
+                return;
+            }
+
+            await addToCart({
+                variantId,
+                quantity,
+                countryCode: "in",
+            });
+
+            toast.success(
+                `${quantity} item(s) added to cart`
+            );
+        } catch (error) {
+            console.error("Add to cart failed:", error);
+        }
+    };
+    const [quantity, setQuantity] = useState(1);
     return (
+
         <>
             <div className="max-w-[1280px] mx-auto px-4 py-12">
 
@@ -80,19 +108,40 @@ export default function ProductDetails({
                                 </p>
 
                                 <div className="flex items-center gap-5 text-lg">
-                                    <button>-</button>
-                                    <span>1</span>
-                                    <button>+</button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setQuantity((prev) =>
+                                                Math.max(1, prev - 1)
+                                            )
+                                        }
+                                        className="w-8 h-8 border rounded hover:bg-gray-100"
+                                    >
+                                        -
+                                    </button>
+
+                                    <span className="min-w-[30px] text-center font-semibold">
+                                        {quantity}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setQuantity((prev) => prev + 1)
+                                        }
+                                        className="w-8 h-8 border rounded hover:bg-gray-100"
+                                    >
+                                        +
+                                    </button>
                                 </div>
                             </div>
-
                             <div>
                                 <p className="font-bold text-[12px] mb-4">
                                     PRICE
                                 </p>
 
                                 <p className="font-semibold text-[22px]">
-                                    ${price}
+                                    ${(price * quantity).toFixed(2)}
                                 </p>
                             </div>
 
@@ -100,7 +149,7 @@ export default function ProductDetails({
 
                         <div className="flex gap-6">
 
-                            <button className="w-[280px] h-[68px] border border-[#c87a4c] text-[#c87a4c] font-semibold uppercase tracking-wide hover:bg-[#c87a4c] hover:text-white transition">
+                            <button className="w-[280px] h-[68px] border border-[#c87a4c] text-[#c87a4c] font-semibold uppercase tracking-wide hover:bg-[#c87a4c] hover:text-white transition" onClick={handleAddToCart}>
                                 Add To Cart
                             </button>
 

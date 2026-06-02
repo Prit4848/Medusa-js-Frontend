@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import { Product } from '@/middleware/types/commerce.types';
 import Link from "next/link";
-
+import { addToCart } from "@/lib/data/cart";
+import toast from "react-hot-toast";
+import { useState } from "react";
 interface Props {
   product: Product | null;
   open: boolean;
@@ -18,7 +20,29 @@ export default function QuickViewModal({
   price,
 }: Props) {
   if (!open || !product) return null;
+  const handleAddToCart = async () => {
+    try {
+      const variantId = product?.variants?.[0]?.id;
 
+      if (!variantId) {
+        console.error("No variant found");
+        return;
+      }
+
+      await addToCart({
+        variantId,
+        quantity,
+        countryCode: "in",
+      });
+
+      toast.success(
+        "Product successfully added to cart"
+      );
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+    }
+  };
+  const [quantity, setQuantity] = useState(1);
   return (
     <div className="overlay" onClick={onClose}>
       <div
@@ -61,18 +85,53 @@ export default function QuickViewModal({
 
           <div className="priceRow">
             <div>
-              <p>QUANTITY</p>
-              <div>- 1 +</div>
+              <p className="font-bold text-[12px] mb-4">
+                QUANTITY
+              </p>
+
+              <div className="flex items-center gap-5 text-lg">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setQuantity((prev) =>
+                      Math.max(1, prev - 1)
+                    )
+                  }
+                  className="w-8 h-8 border rounded hover:bg-gray-100"
+                >
+                  -
+                </button>
+
+                <span className="min-w-[30px] text-center font-semibold">
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setQuantity((prev) => prev + 1)
+                  }
+                  className="w-8 h-8 border rounded hover:bg-gray-100"
+                >
+                  +
+                </button>
+              </div>
             </div>
 
             <div>
-              <p>PRICE</p>
-              <div>${price}</div>
+              <p className="font-bold text-[12px] mb-4">
+                PRICE
+              </p>
+
+              <p className="font-semibold text-[22px]">
+                ${(price * quantity).toFixed(2)}
+              </p>
             </div>
+
           </div>
 
           <div className="buttons">
-            <button className="outline">
+            <button className="outline" onClick={handleAddToCart}>
               ADD TO CART
             </button>
 

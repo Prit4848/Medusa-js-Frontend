@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { FiHeart, FiSearch, FiShoppingCart } from 'react-icons/fi';
 import { Product } from '@/middleware/types/commerce.types';
 import QuickViewModal from './QuickViewModal';
+import { addToCart } from "@/lib/data/cart";
+import toast from "react-hot-toast";
 
 const PLACEHOLDER =
   'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=70';
@@ -23,7 +25,33 @@ export default function ShopProductCard({
 
   const thumbnail = product.thumbnail || PLACEHOLDER;
   const formattedPrice = `$${price.toFixed(2)}`;
+  const handleAddToCart = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
 
+    try {
+      const variantId = product?.variants?.[0]?.id;
+
+      if (!variantId) {
+        console.error("No variant found");
+        return;
+      }
+
+      await addToCart({
+        variantId,
+        quantity: 1,
+        countryCode: "in",
+      });
+
+      toast.success(
+  "Product successfully added to cart"
+);
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+    }
+  };
   return (
     <>
       <div className="shop-card" style={styles.card}>
@@ -58,7 +86,7 @@ export default function ShopProductCard({
                 <FiSearch />
               </button>
 
-              <button className="action-btn">
+              <button className="action-btn" onClick={handleAddToCart}>
                 <FiShoppingCart />
               </button>
             </div>

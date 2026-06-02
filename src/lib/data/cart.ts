@@ -46,7 +46,7 @@ export async function retrieveCart(cartId?: string, fields?: string) {
       },
       headers,
       next,
-      cache: "force-cache",
+      cache: "no-store",
     })
     .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
     .catch(() => null)
@@ -177,7 +177,8 @@ export async function updateLineItem({
   const headers = {
     ...(await getAuthHeaders()),
   }
-
+  console.log("cartId", cartId)
+console.log("lineId", lineId)
   await sdk.store.cart
     .updateLineItem(cartId, lineId, { quantity }, {}, headers)
     .then(async () => {
@@ -187,7 +188,11 @@ export async function updateLineItem({
       const fulfillmentCacheTag = await getCacheTag("fulfillment")
       revalidateTag(fulfillmentCacheTag)
     })
-    .catch(medusaError)
+    .catch((err) => {
+  console.log("FULL ERROR")
+  console.dir(err, { depth: null })
+  throw err
+})
 }
 
 export async function deleteLineItem(lineId: string) {
@@ -214,7 +219,11 @@ export async function deleteLineItem(lineId: string) {
       const fulfillmentCacheTag = await getCacheTag("fulfillment")
       revalidateTag(fulfillmentCacheTag)
     })
-    .catch(medusaError)
+    .catch((err) => {
+  console.log("FULL ERROR")
+  console.dir(err, { depth: null })
+  throw err
+})
 }
 
 export async function setShippingMethod({
