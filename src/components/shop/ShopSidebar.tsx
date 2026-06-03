@@ -22,74 +22,58 @@ export default function ShopSidebar({
   priceMaxLimit,
 }: ShopSidebarProps) {
   const toggle = (arr: string[], item: string): string[] =>
-    arr.includes(item)
-      ? arr.filter((i) => i !== item)
-      : [...arr, item];
+    arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item];
 
   const handleCategory = (name: string) =>
-    onFiltersChange({
-      ...filters,
-      categories: toggle(filters.categories, name),
-    });
+    onFiltersChange({ ...filters, categories: toggle(filters.categories, name) });
 
   const handleBrand = (title: string) =>
-    onFiltersChange({
-      ...filters,
-      brands: toggle(filters.brands, title),
-    });
+    onFiltersChange({ ...filters, brands: toggle(filters.brands, title) });
 
   const handleAvailability = (avail: string) =>
-    onFiltersChange({
-      ...filters,
-      availability: toggle(filters.availability, avail),
-    });
+    onFiltersChange({ ...filters, availability: toggle(filters.availability, avail) });
 
   return (
-    <aside style={styles.sidebar}>
-      {categories.length > 0 && (
-        <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>Categories</h3>
+    <aside className="w-[310px] min-w-[310px] px-[32px] py-[42px] bg-[#fafafa] border-r border-[#ececec] flex-shrink-0">
 
+      {/* Categories */}
+      {categories.length > 0 && (
+        <div className="mb-12">
+          <h3 className="text-[13px] font-bold tracking-[0.14em] uppercase text-[#222] mb-[26px]">
+            Categories
+          </h3>
           {categories.map((cat) => (
-            <label key={cat.id} style={styles.checkItem}>
+            <label key={cat.id} className="flex items-center gap-3 mb-[18px] cursor-pointer">
               <input
                 type="checkbox"
                 checked={filters.categories.includes(cat.name)}
                 onChange={() => handleCategory(cat.name)}
-                style={styles.checkbox}
+                className="w-5 h-5 cursor-pointer accent-[#c97a4a]"
               />
-
-              <span style={styles.checkLabel}>
-                {cat.name}
-              </span>
+              <span className="text-[16px] text-[#444]">{cat.name}</span>
             </label>
           ))}
         </div>
       )}
 
-      {/* PRICE */}
-      <div style={styles.section}>
-        <h3 style={styles.sectionTitle}>Price</h3>
-
-        <p style={styles.priceLabel}>
+      {/* Price */}
+      <div className="mb-12">
+        <h3 className="text-[13px] font-bold tracking-[0.14em] uppercase text-[#222] mb-[26px]">
+          Price
+        </h3>
+        <p className="text-[16px] text-[#666] mb-[18px]">
           Price Range: ${filters.priceMin} - ${filters.priceMax}
         </p>
-
         <Range
           step={1}
           min={0}
           max={priceMaxLimit}
           values={[filters.priceMin, filters.priceMax]}
           onChange={([min, max]) =>
-            onFiltersChange({
-              ...filters,
-              priceMin: min,
-              priceMax: max,
-            })
+            onFiltersChange({ ...filters, priceMin: min, priceMax: max })
           }
           renderTrack={({ props, children }) => {
             const { key, ...rest } = props as any;
-
             return (
               <div
                 key={key}
@@ -108,7 +92,6 @@ export default function ShopSidebar({
           }}
           renderThumb={({ props }) => {
             const { key, ...rest } = props;
-
             return (
               <div
                 key={key}
@@ -125,109 +108,50 @@ export default function ShopSidebar({
             );
           }}
         />
-
-        <div style={styles.priceMinMax}>
+        <div className="flex justify-between mt-4 text-[14px] text-[#888]">
           <span>{filters.priceMin} $</span>
           <span>{filters.priceMax} $</span>
         </div>
       </div>
 
+      {/* Brands */}
       {collections.length > 0 && (
-        <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>Brands</h3>
-
+        <div className="mb-12">
+          <h3 className="text-[13px] font-bold tracking-[0.14em] uppercase text-[#222] mb-[26px]">
+            Brands
+          </h3>
           {collections.map((col) => (
-            <label key={col.id} style={styles.checkItem}>
+            <label key={col.id} className="flex items-center gap-3 mb-[18px] cursor-pointer">
               <input
                 type="checkbox"
                 checked={filters.brands.includes(col.title)}
                 onChange={() => handleBrand(col.title)}
-                style={styles.checkbox}
+                className="w-5 h-5 cursor-pointer accent-[#c97a4a]"
               />
-
-              <span style={styles.checkLabel}>
-                {col.title}
-              </span>
+              <span className="text-[16px] text-[#444]">{col.title}</span>
             </label>
           ))}
         </div>
       )}
 
-      <div style={styles.section}>
-        <h3 style={styles.sectionTitle}>Availability</h3>
-
+      {/* Availability */}
+      <div className="mb-12">
+        <h3 className="text-[13px] font-bold tracking-[0.14em] uppercase text-[#222] mb-[26px]">
+          Availability
+        </h3>
         {AVAILABILITY.map((avail) => (
-          <label key={avail} style={styles.checkItem}>
+          <label key={avail} className="flex items-center gap-3 mb-[18px] cursor-pointer">
             <input
               type="checkbox"
               checked={filters.availability.includes(avail)}
               onChange={() => handleAvailability(avail)}
-              style={styles.checkbox}
+              className="w-5 h-5 cursor-pointer accent-[#c97a4a]"
             />
-
-            <span style={styles.checkLabel}>
-              {avail}
-            </span>
+            <span className="text-[16px] text-[#444]">{avail}</span>
           </label>
         ))}
       </div>
+
     </aside>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  sidebar: {
-    width: 310,
-    minWidth: 310,
-    padding: '42px 32px',
-    background: '#fafafa',
-    borderRight: '1px solid #ececec',
-    flexShrink: 0,
-  },
-
-  section: {
-    marginBottom: 48,
-  },
-
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: 700,
-    letterSpacing: '0.14em',
-    textTransform: 'uppercase',
-    color: '#222',
-    marginBottom: 26,
-  },
-
-  checkItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 18,
-    cursor: 'pointer',
-  },
-
-  checkbox: {
-    width: 20,
-    height: 20,
-    cursor: 'pointer',
-  },
-
-  checkLabel: {
-    fontSize: 16,
-    color: '#444',
-  },
-
-  priceLabel: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 18,
-  },
-
-  priceMinMax: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: 16,
-    color: '#888',
-    fontSize: 14,
-  },
-};

@@ -273,7 +273,7 @@ export default function CartPage({ cart }: CartPageProps) {
               </div>
             </div>
 
-            <button className="w-full h-[62px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition">
+            <button className="w-full h-[62px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition"  onClick={() => router.push('/billing')}>
               CHECK OUT
             </button>
           </div>

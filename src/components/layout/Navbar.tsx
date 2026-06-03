@@ -4,18 +4,19 @@ import {
   User,
   ShoppingCart,
   ChevronDown,
+  Heart,
 } from 'lucide-react';
 import { retrieveCart } from "@lib/data/cart";
 
 export default async function Navbar() {
   const cart = await retrieveCart();
 
-const cartCount =
-  cart?.items?.reduce(
-    (acc: number, item: any) =>
-      acc + item.quantity,
-    0
-  ) || 0;
+  const cartCount =
+    cart?.items?.reduce(
+      (acc: number, item: any) =>
+        acc + item.quantity,
+      0
+    ) || 0;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#f5f5f5] border-b border-gray-200">
@@ -39,12 +40,9 @@ const cartCount =
             className="group relative text-[16px] font-light text-[#3f4654] hover:text-[#c47c48] transition-colors duration-300"
           >
             <span className="flex items-center gap-2">
-
-              {/* Animated line */}
               <span className="relative w-5 h-[2px] overflow-hidden">
                 <span className="absolute left-0 top-0 h-full w-full bg-[#c47c48] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
               </span>
-
               Home
             </span>
           </Link>
@@ -58,32 +56,26 @@ const cartCount =
                 </span>
                 Pages
               </span>
-
-              <ChevronDown
-                size={16}
-                strokeWidth={2}
-                className="mt-[2px]"
-              />
+              <ChevronDown size={16} strokeWidth={2} className="mt-[2px]" />
             </button>
 
-            {/* DROPDOWN */}
             <div className="absolute left-1/2 -translate-x-1/2 top-[58px] w-[300px] bg-[#f5f5f5] shadow-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
               <div className="py-5">
                 {[
-                  'About Us',
-                  'About Team',
-                  'Contact Us',
-                  'FAQ',
-                  '404',
-                  'Wishlist',
-                  'Login',
+                  { label: 'About Us', href: '/' },
+                  { label: 'About Team', href: '/' },
+                  { label: 'Contact Us', href: '/' },
+                  { label: 'FAQ', href: '/' },
+                  { label: '404', href: '/' },
+                  { label: 'Wishlist', href: '/wishlist' },
+                  { label: 'Login', href: '/' },
                 ].map((item) => (
                   <Link
-                    key={item}
-                    href="/"
+                    key={item.label}
+                    href={item.href}
                     className="block px-8 py-5 text-[18px] text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 ))}
               </div>
@@ -99,34 +91,18 @@ const cartCount =
                 </span>
                 Shop
               </span>
-
-              <ChevronDown
-                size={16}
-                strokeWidth={2}
-                className="mt-[2px]"
-              />
+              <ChevronDown size={16} strokeWidth={2} className="mt-[2px]" />
             </button>
 
             <div className="absolute left-1/2 -translate-x-1/2 top-[58px] w-[300px] bg-[#f5f5f5] shadow-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
               <div className="py-5">
-                <Link
-                  href="/shop"
-                  className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300"
-                >
+                <Link href="/shop" className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300">
                   Shop
                 </Link>
-
-                <Link
-                  href="/categories"
-                  className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300"
-                >
+                <Link href="/categories" className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300">
                   Categories
                 </Link>
-
-                <Link
-                  href="/account"
-                  className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300"
-                >
+                <Link href="/account" className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300">
                   Account
                 </Link>
               </div>
@@ -135,19 +111,14 @@ const cartCount =
 
           {/* BLOG */}
           <div className="relative group">
-            <button className="flex items-center gap-1 text-text-[16px] font-light text-[#3f4654] hover:text-[#c47c48] transition-colors duration-300">
+            <button className="flex items-center gap-1 text-[16px] font-light text-[#3f4654] hover:text-[#c47c48] transition-colors duration-300">
               <span className="relative flex items-center gap-2">
                 <span className="relative w-5 h-[2px] overflow-hidden">
                   <span className="absolute left-0 top-0 h-full w-full bg-[#c47c48] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                 </span>
                 Blog
               </span>
-
-              <ChevronDown
-                size={16}
-                strokeWidth={2}
-                className="mt-[2px]"
-              />
+              <ChevronDown size={16} strokeWidth={2} className="mt-[2px]" />
             </button>
 
             <div className="absolute left-1/2 -translate-x-1/2 top-[58px] w-[300px] bg-[#f5f5f5] shadow-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
@@ -178,14 +149,17 @@ const cartCount =
           </button>
 
           <Link
+            href="/wishlist"
+            className="hover:text-[#c47c48] transition-colors duration-300"
+          >
+            <Heart size={22} strokeWidth={1.8} />
+          </Link>
+
+          <Link
             href="/cart"
             className="relative hover:text-[#c47c48] transition-colors duration-300"
           >
-            <ShoppingCart
-              size={22}
-              strokeWidth={1.8}
-            />
-
+            <ShoppingCart size={22} strokeWidth={1.8} />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-3 w-5 h-5 rounded-full bg-[#c97a4a] text-white text-[11px] flex items-center justify-center">
                 {cartCount}

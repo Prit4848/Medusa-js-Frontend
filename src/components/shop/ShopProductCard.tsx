@@ -7,6 +7,7 @@ import { FiHeart, FiSearch, FiShoppingCart } from 'react-icons/fi';
 import { Product } from '@/middleware/types/commerce.types';
 import QuickViewModal from './QuickViewModal';
 import { addToCart } from "@/lib/data/cart";
+import { useWishlist } from '@/lib/wishlist';
 import toast from "react-hot-toast";
 
 const PLACEHOLDER =
@@ -18,18 +19,37 @@ interface ShopProductCardProps {
   price: number;
 }
 
-export default function ShopProductCard({
-  product,
-  price,
-}: ShopProductCardProps) {
+export default function ShopProductCard({ product, price }: ShopProductCardProps) {
   const [showQuickView, setShowQuickView] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const { isWishlisted, addItem, removeItem } = useWishlist();
 
+  const wishlisted = isWishlisted(product.id);
   const thumbnail = product.thumbnail || PLACEHOLDER;
   const formattedPrice = `$${price.toFixed(2)}`;
-  const handleAddToCart = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+
+  const handleWishlist = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (wishlisted) {
+      removeItem(product.id);
+      toast.success('Removed from wishlist');
+    } else {
+      addItem({
+        id: product.id,
+        handle: product.handle,
+        title: product.title,
+        category: product.category ?? '',
+        thumbnail: product.thumbnail ?? '',
+        price,
+        variantId: product.variants?.[0]?.id ?? '',
+        inStock: (product.variants?.[0]?.inventory_quantity ?? 0) > 0,
+      });
+      toast.success('Added to wishlist');
+    }
+  };
+
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsAdding(true);
@@ -39,16 +59,13 @@ export default function ShopProductCard({
       const variantId = variant?.id;
 
       if (!variantId) {
-        console.error("No variant found");
         toast.error("No variant found for this product");
         return;
       }
-
       if (variant.manage_inventory && (variant.inventory_quantity ?? 0) < 1) {
         toast.error("This product is out of stock");
         return;
       }
-
       if (!variant.price || variant.price <= 0) {
         toast.error("This product is not priced for the selected region");
         return;
@@ -65,41 +82,64 @@ export default function ShopProductCard({
         return;
       }
 
-      toast.success(
-  "Product successfully added to cart"
-);
+      toast.success("Product successfully added to cart");
     } catch (error) {
-      console.error("Add to cart failed:", error);
       toast.error(error instanceof Error ? error.message : "Unable to add item to cart");
     } finally {
       setIsAdding(false);
     }
   };
+
   return (
     <>
-      <div className="shop-card" style={styles.card}>
-        <Link
-          href={`/products/${product.handle}`}
-          style={styles.link}
-        >
-          <div style={styles.imageWrapper}>
+      <div className="relative group cursor-pointer bg-transparent">
+        <Link href={`/products/${product.handle}`} className="block no-underline text-inherit">
+
+          {/* image wrapper */}
+          <div className="relative w-full aspect-square bg-[#f7f6f4] overflow-hidden">
             <Image
               src={thumbnail}
               alt={product.title}
               fill
               sizes="(max-width: 768px) 100vw, 33vw"
-              style={{
-                objectFit: 'contain',
-              }}
+              className="object-contain transition-transform duration-[350ms] ease-in-out group-hover:scale-[1.03]"
             />
 
-            <div className="actions">
-              <button className="action-btn">
-                <FiHeart />
+            {/* action buttons */}
+            <div className="
+              absolute top-1/2 -translate-y-1/2
+              flex flex-col gap-2
+              opacity-0 right-[-8px]
+              transition-all duration-300 ease-in-out
+              group-hover:opacity-100 group-hover:right-3
+            ">
+              {/* Heart — now wired to wishlist */}
+              <button
+                className="
+                  w-8 h-8 rounded-full border-none bg-white
+                  flex items-center justify-center
+                  text-[13px]
+                  shadow-[0_2px_6px_rgba(0,0,0,0.12)]
+                  transition-all duration-200
+                  hover:bg-[#c97a4a] hover:text-white
+                  cursor-pointer
+                "
+                style={{ color: wishlisted ? '#c97a4a' : '#222' }}
+                onClick={handleWishlist}
+              >
+                <FiHeart style={{ fill: wishlisted ? '#c97a4a' : 'none' }} />
               </button>
 
               <button
-                className="action-btn"
+                className="
+                  w-8 h-8 rounded-full border-none bg-white
+                  flex items-center justify-center
+                  text-[13px] text-[#222]
+                  shadow-[0_2px_6px_rgba(0,0,0,0.12)]
+                  transition-all duration-200
+                  hover:bg-[#c97a4a] hover:text-white
+                  cursor-pointer
+                "
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -109,9 +149,22 @@ export default function ShopProductCard({
                 <FiSearch />
               </button>
 
-              <button className="action-btn" onClick={handleAddToCart} disabled={isAdding}>
+              <button
+                className="
+                  w-8 h-8 rounded-full border-none bg-white
+                  flex items-center justify-center
+                  text-[13px] text-[#222]
+                  shadow-[0_2px_6px_rgba(0,0,0,0.12)]
+                  transition-all duration-200
+                  hover:bg-[#c97a4a] hover:text-white
+                  cursor-pointer
+                  disabled:opacity-50
+                "
+                onClick={handleAddToCart}
+                disabled={isAdding}
+              >
                 {isAdding ? (
-                  <div className="w-4 h-4 border-2 border-[#c97a4a] border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-[#c97a4a] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <FiShoppingCart />
                 )}
@@ -119,72 +172,19 @@ export default function ShopProductCard({
             </div>
           </div>
 
-          <div style={styles.info}>
-            <p style={styles.category}>
+          {/* info */}
+          <div className="pt-[14px]">
+            <p className="text-[14px] text-[#8f8f8f] font-normal mb-2">
               {product.category ?? 'Uncategorized'}
             </p>
-
-            <p style={styles.name}>
+            <p className="text-[16px] font-bold text-[#222] leading-[1.3] mb-2">
               {product.title}
             </p>
-
-            <p style={styles.price}>
+            <p className="text-[16px] text-[#333] font-normal">
               {formattedPrice}
             </p>
           </div>
         </Link>
-
-        <style jsx>{`
-  .shop-card {
-    position: relative;
-  }
-
-  .actions {
-    position: absolute;
-    top: 50%;
-    right: -8px;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    opacity: 0;
-    transition: all 0.3s ease;
-  }
-
-  .shop-card:hover .actions {
-    opacity: 1;
-    right: 12px;
-  }
-
-  .action-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: #222;
-    box-shadow: 0 2px 6px rgba(0,0,0,.12);
-    transition: all .2s ease;
-  }
-
-  .action-btn:hover {
-    background: #c97a4a;
-    color: white;
-  }
-
-  .shop-card :global(img) {
-    transition: transform .35s ease;
-  }
-
-  .shop-card:hover :global(img) {
-    transform: scale(1.03);
-  }
-`}</style>
       </div>
 
       <QuickViewModal
@@ -196,49 +196,3 @@ export default function ShopProductCard({
     </>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  link: {
-    textDecoration: 'none',
-    color: 'inherit',
-    display: 'block',
-  },
-
-  card: {
-    background: 'transparent',
-    cursor: 'pointer',
-  },
-
-  imageWrapper: {
-    position: 'relative',
-    width: '100%',
-    aspectRatio: '1 / 1',
-    background: '#f7f6f4',
-    overflow: 'hidden',
-  },
-
-  info: {
-    paddingTop: 14,
-  },
-
-  category: {
-    fontSize: 14,
-    color: '#8f8f8f',
-    marginBottom: 8,
-    fontWeight: 400,
-  },
-
-  name: {
-    fontSize: 16,
-    fontWeight: 700,
-    color: '#222',
-    marginBottom: 8,
-    lineHeight: 1.3,
-  },
-
-  price: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: 400,
-  },
-};

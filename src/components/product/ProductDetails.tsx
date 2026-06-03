@@ -5,6 +5,7 @@ import { addToCart } from "@/lib/data/cart";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
+
 const DEFAULT_COUNTRY_CODE = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us";
 
 export default function ProductDetails({
@@ -175,8 +176,8 @@ export default function ProductDetails({
 
                         <div className="flex gap-6">
 
-                            <button 
-                                className="w-[280px] h-[68px] border border-[#c87a4c] text-[#c87a4c] font-semibold uppercase tracking-wide hover:bg-[#c87a4c] hover:text-white transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+                            <button
+                                className="w-[280px] h-[68px] border border-[#c87a4c] text-[#c87a4c] font-semibold uppercase tracking-wide hover:bg-[#c87a4c] hover:text-white transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={handleAddToCart}
                                 disabled={isAdding}
                             >
@@ -187,9 +188,11 @@ export default function ProductDetails({
                                 )}
                             </button>
 
-                            <button className="w-[280px] h-[68px] bg-[#c87a4c] text-white font-semibold uppercase tracking-wide hover:bg-[#b56c43] transition">
-                                Buy Now
-                            </button>
+                            <Link href="/billing" className="w-full">
+                                <button className="w-full h-[62px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition">
+                                    BUY NOW
+                                </button>
+                            </Link>
 
                         </div>
 

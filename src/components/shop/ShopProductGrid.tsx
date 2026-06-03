@@ -27,33 +27,53 @@ export default function ShopProductGrid({
   getPrice,
 }: ShopProductGridProps) {
   return (
-    <div style={styles.main}>
-      <div style={styles.topBar}>
-        <p style={styles.showingText}>
-          Showing <span style={styles.highlight}>{products.length}</span> of{' '}
-          <span style={styles.highlight}>{totalProducts}</span> Products
+    <div className="flex-1 px-[42px] py-[50px] bg-[#fafafa]">
+
+      {/* top bar */}
+      <div className="flex justify-between items-center mb-[60px]">
+        <p className="text-[18px] text-[#555] font-normal">
+          Showing{' '}
+          <span className="text-[#c86f43] font-semibold">{products.length}</span>
+          {' '}of{' '}
+          <span className="text-[#c86f43] font-semibold">{totalProducts}</span>
+          {' '}Products
         </p>
-        <div style={styles.sortWrapper}>
-          <span style={styles.sortLabel}>Sort by:</span>
-          <div style={styles.selectWrapper}>
+
+        <div className="flex items-center gap-4">
+          <span className="text-[18px] text-[#555]">Sort by:</span>
+          <div className="relative inline-flex items-center">
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value as SortOption)}
-              style={styles.select}
+              className="
+                w-[200px] h-[58px]
+                border border-[#e5e5e5] bg-white
+                pl-[22px] pr-[45px]
+                text-[16px] text-[#555]
+                outline-none appearance-none cursor-pointer
+              "
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
-            <span style={styles.chevron}>▾</span>
+            <span className="absolute right-[18px] pointer-events-none text-[#777] text-[12px]">
+              ▾
+            </span>
           </div>
         </div>
       </div>
 
+      {/* grid or empty */}
       {products.length === 0 ? (
-        <p style={styles.empty}>No products match your filters.</p>
+        <p className="text-center text-[#999] mt-[60px]">
+          No products match your filters.
+        </p>
       ) : (
-        <div style={styles.grid}>
+        <div
+          className="grid justify-start gap-x-[35px] gap-y-[40px]"
+          style={{ gridTemplateColumns: 'repeat(3, 280px)' }}
+        >
           {products.map((product) => (
             <ShopProductCard
               key={product.id}
@@ -63,84 +83,7 @@ export default function ShopProductGrid({
           ))}
         </div>
       )}
+
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  main: {
-    flex: 1,
-    padding: '50px 42px',
-    background: '#fafafa',
-  },
-
-  topBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 60,
-  },
-
-  showingText: {
-    fontSize: 18,
-    color: '#555',
-    fontWeight: 400,
-  },
-
-  highlight: {
-    color: '#c86f43',
-    fontWeight: 600,
-  },
-
-  sortWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 16,
-  },
-
-  sortLabel: {
-    fontSize: 18,
-    color: '#555',
-  },
-
-  selectWrapper: {
-    position: 'relative',
-    display: 'inline-flex',
-    alignItems: 'center',
-  },
-
-  select: {
-    width: 200,
-    height: 58,
-    border: '1px solid #e5e5e5',
-    background: '#fff',
-    padding: '0 45px 0 22px',
-    fontSize: 16,
-    color: '#555',
-    outline: 'none',
-    appearance: 'none',
-    WebkitAppearance: 'none',
-    cursor: 'pointer',
-  },
-
-  chevron: {
-    position: 'absolute',
-    right: 18,
-    pointerEvents: 'none',
-    color: '#777',
-    fontSize: 12,
-  },
-
-  grid: {
-    display: 'grid',
-    justifyContent: 'start',
-gridTemplateColumns: 'repeat(3, 280px)',
-gap: '40px 35px',
-  },
-
-  empty: {
-    textAlign: 'center',
-    color: '#999',
-    marginTop: 60,
-  },
-};

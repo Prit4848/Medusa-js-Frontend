@@ -40,12 +40,12 @@ export default function ShopPage({ products, categories, collections }: ShopPage
   }, [products]);
 
   const [filters, setFilters] = useState<ShopFilters>({
-  categories: [],
-  brands: [],
-  priceMin: 0,
-  priceMax: priceMaxLimit,
-  availability: [],
-});
+    categories: [],
+    brands: [],
+    priceMin: 0,
+    priceMax: priceMaxLimit,
+    availability: [],
+  });
   const [sortBy, setSortBy] = useState<SortOption>('Most Popular');
 
   const filteredProducts = useMemo(() => {
@@ -66,14 +66,13 @@ export default function ShopPage({ products, categories, collections }: ShopPage
     }
 
     // Filter by price
-result = result.filter((p) => {
-  const price = getPrice(p);
-
-  return (
-    price >= filters.priceMin &&
-    price <= filters.priceMax
-  );
-});
+    result = result.filter((p) => {
+      const price = getPrice(p);
+      return (
+        price >= filters.priceMin &&
+        price <= filters.priceMax
+      );
+    });
 
     // Filter by availability using inventory_quantity from variants
     if (filters.availability.length > 0) {
@@ -113,7 +112,7 @@ result = result.filter((p) => {
   }, [products, filters, sortBy]);
 
   return (
-    <div style={styles.wrapper}>
+    <div className="flex bg-[#fafafa] min-h-screen max-w-[1600px] mx-auto">
       <ShopSidebar
         filters={filters}
         onFiltersChange={setFilters}
@@ -131,13 +130,3 @@ result = result.filter((p) => {
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  wrapper: {
-    display: 'flex',
-    background: '#fafafa',
-    minHeight: '100vh',
-    maxWidth: '1600px',
-    margin: '0 auto',
-  },
-};

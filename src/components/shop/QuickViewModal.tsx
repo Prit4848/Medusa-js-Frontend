@@ -1,11 +1,10 @@
-'use client';
-
 import Image from 'next/image';
 import { Product } from '@/middleware/types/commerce.types';
 import Link from "next/link";
 import { addToCart } from "@/lib/data/cart";
 import toast from "react-hot-toast";
 import { useState } from "react";
+
 
 const DEFAULT_COUNTRY_CODE = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us";
 
@@ -26,6 +25,7 @@ export default function QuickViewModal({
   const [isAdding, setIsAdding] = useState(false);
 
   if (!open || !product) return null;
+
   const handleAddToCart = async () => {
     setIsAdding(true);
     try {
@@ -59,9 +59,7 @@ export default function QuickViewModal({
         return;
       }
 
-      toast.success(
-        "Product successfully added to cart"
-      );
+      toast.success("Product successfully added to cart");
     } catch (error) {
       console.error("Add to cart failed:", error);
       toast.error(error instanceof Error ? error.message : "Unable to add item to cart");
@@ -69,13 +67,18 @@ export default function QuickViewModal({
       setIsAdding(false);
     }
   };
+
   return (
-    <div className="overlay" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/55 z-[1000] flex items-center justify-center"
+      onClick={onClose}
+    >
       <div
-        className="modal"
+        className="w-[1030px] h-[640px] bg-white flex"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="left">
+        {/* Left */}
+        <div className="w-1/2 relative bg-[#f7f6f4]">
           <Image
             src={product.thumbnail!}
             alt={product.title}
@@ -84,32 +87,35 @@ export default function QuickViewModal({
           />
         </div>
 
-        <div className="right">
+        {/* Right */}
+        <div className="w-1/2 p-[38px]">
           <Link
             href={`/products/${product.handle}`}
-            className="topLink"
+            className="text-[#c86f43] text-[22px] no-underline"
           >
             More about product →
           </Link>
 
-          <div className="category">
+          <div className="text-[#888] text-[14px] mb-[18px]">
             {product.category}
           </div>
 
-          <h2>{product.title}</h2>
+          <h2 className="text-[28px] font-bold text-[#222] m-0 mb-[25px]">
+            {product.title}
+          </h2>
 
-          <div className="stars">
+          <div className="text-[#d9ab76] text-[24px] mb-[28px]">
             ★ ★ ★ ★ ☆
-            <span>12 reviews</span>
+            <span className="text-[#999] text-[15px] ml-3">12 reviews</span>
           </div>
 
-          <p className="desc">
+          <p className="text-[#666] leading-[1.8] text-[15px] mb-[45px]">
             Lorem ipsum dolor sit amet, consectetur
             adipiscing elit. In ut ullamcorper leo,
             eget euismod orci.
           </p>
 
-          <div className="priceRow">
+          <div className="flex gap-[70px] mb-[60px]">
             <div>
               <p className="font-bold text-[12px] mb-4">
                 QUANTITY
@@ -119,9 +125,7 @@ export default function QuickViewModal({
                 <button
                   type="button"
                   onClick={() =>
-                    setQuantity((prev) =>
-                      Math.max(1, prev - 1)
-                    )
+                    setQuantity((prev) => Math.max(1, prev - 1))
                   }
                   className="w-8 h-8 border rounded hover:bg-gray-100"
                 >
@@ -134,9 +138,7 @@ export default function QuickViewModal({
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setQuantity((prev) => prev + 1)
-                  }
+                  onClick={() => setQuantity((prev) => prev + 1)}
                   className="w-8 h-8 border rounded hover:bg-gray-100"
                 >
                   +
@@ -153,14 +155,13 @@ export default function QuickViewModal({
                 ${(price * quantity).toFixed(2)}
               </p>
             </div>
-
           </div>
 
-          <div className="buttons">
-            <button 
-                className="outline flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
-                onClick={handleAddToCart}
-                disabled={isAdding}
+          <div className="flex gap-[22px]">
+            <button
+              className="w-[210px] h-[56px] text-[14px] font-bold cursor-pointer transition-opacity duration-200 bg-white border border-[#c97a4a] text-[#c97a4a] flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+              onClick={handleAddToCart}
+              disabled={isAdding}
             >
               {isAdding ? (
                 <div className="w-6 h-6 border-2 border-[#c97a4a] border-t-transparent rounded-full animate-spin"></div>
@@ -169,130 +170,14 @@ export default function QuickViewModal({
               )}
             </button>
 
-            <button className="filled">
-              BUY NOW
-            </button>
+            <Link href="/billing" className="w-full">
+              <button className="w-full h-[62px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition">
+                BUY NOW
+              </button>
+            </Link>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.55);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal {
-    width: 1030px;
-    height: 640px;
-    background: white;
-    display: flex;
-  }
-
-  .left {
-    width: 50%;
-    position: relative;
-    background: #f7f6f4;
-  }
-
-  .right {
-    width: 50%;
-    padding: 38px;
-  }
-
-.topLink {
-  color: #c86f43;
-  font-size: 22px;
-  text-decoration: none;
-}
-
-  .category {
-    color: #888;
-    font-size: 14px;
-    margin-bottom: 18px;
-  }
-
-  h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #222;
-    margin: 0 0 25px;
-  }
-
-  .stars {
-    color: #d9ab76;
-    font-size: 24px;
-    margin-bottom: 28px;
-  }
-
-  .stars span {
-    color: #999;
-    font-size: 15px;
-    margin-left: 12px;
-  }
-
-  .desc {
-    color: #666;
-    line-height: 1.8;
-    font-size: 15px;
-    margin-bottom: 45px;
-  }
-
-  .priceRow {
-    display: flex;
-    gap: 70px;
-    margin-bottom: 60px;
-  }
-
-  .priceRow p {
-    font-size: 14px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 10px;
-  }
-
-  .priceRow div div {
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .buttons {
-    display: flex;
-    gap: 22px;
-  }
-
-  .outline,
-  .filled {
-    width: 210px;
-    height: 56px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: .2s;
-  }
-
-  .outline {
-    background: white;
-    border: 1px solid #c97a4a;
-    color: #c97a4a;
-  }
-
-  .filled {
-    background: #c97a4a;
-    color: white;
-    border: none;
-  }
-
-  .outline:hover,
-  .filled:hover {
-    opacity: .9;
-  }
-`}</style>
     </div>
   );
 }
