@@ -122,7 +122,7 @@ export async function addToCart({
   variantId: string
   quantity: number
   countryCode: string
-}) {
+}): Promise<{ success: boolean; error?: string }> {
   if (!variantId) {
     throw new Error("Missing variant ID when adding to cart")
   }
@@ -137,8 +137,8 @@ export async function addToCart({
     ...(await getAuthHeaders()),
   }
 
-  await sdk.store.cart
-    .createLineItem(
+  try {
+    await sdk.store.cart.createLineItem(
       cart.id,
       {
         variant_id: variantId,
@@ -147,14 +147,26 @@ export async function addToCart({
       {},
       headers
     )
-    .then(async () => {
+
       const cartCacheTag = await getCacheTag("carts")
       revalidateTag(cartCacheTag)
 
       const fulfillmentCacheTag = await getCacheTag("fulfillment")
       revalidateTag(fulfillmentCacheTag)
-    })
-    .catch(medusaError)
+
+    return { success: true }
+  } catch (error: any) {
+    try {
+      medusaError(error)
+    } catch (parsedError: any) {
+      return {
+        success: false,
+        error: parsedError?.message || "Unable to add item to cart",
+      }
+    }
+
+    return { success: false, error: "Unable to add item to cart" }
+  }
 }
 
 export async function updateLineItem({

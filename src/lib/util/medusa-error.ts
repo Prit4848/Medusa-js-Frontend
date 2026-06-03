@@ -1,22 +1,27 @@
 export default function medusaError(error: any): never {
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
-    const u = new URL(error.config.url, error.config.baseURL)
+    // Axios-style or SDK error with response object
+    const u = error.config?.url ? new URL(error.config.url, error.config.baseURL) : "Unknown URL"
     console.error("Resource:", u.toString())
     console.error("Response data:", error.response.data)
     console.error("Status code:", error.response.status)
-    console.error("Headers:", error.response.headers)
 
-    // Extracting the error message from the response data
-    const message = error.response.data.message || error.response.data
+    const message = error.response.data?.message || error.response.data || error.message || "An unknown error occurred"
+    throw new Error(String(message).charAt(0).toUpperCase() + String(message).slice(1) + ".")
+  } else if (error.status) {
+    // Medusa V2 SDK fetch error style
+    console.error("Medusa SDK Error:", {
+      status: error.status,
+      statusText: error.statusText,
+      message: error.message,
+    })
 
-    throw new Error(message.charAt(0).toUpperCase() + message.slice(1) + ".")
+    const message = error.message || "An unknown error occurred"
+    throw new Error(String(message).charAt(0).toUpperCase() + String(message).slice(1) + ".")
   } else if (error.request) {
-    // The request was made but no response was received
     throw new Error("No response received: " + error.request)
   } else {
-    // Something happened in setting up the request that triggered an Error
     throw new Error("Error setting up the request: " + error.message)
   }
 }
+

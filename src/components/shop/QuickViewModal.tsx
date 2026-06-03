@@ -6,6 +6,9 @@ import Link from "next/link";
 import { addToCart } from "@/lib/data/cart";
 import toast from "react-hot-toast";
 import { useState } from "react";
+
+const DEFAULT_COUNTRY_CODE = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us";
+
 interface Props {
   product: Product | null;
   open: boolean;
@@ -19,30 +22,53 @@ export default function QuickViewModal({
   onClose,
   price,
 }: Props) {
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+
   if (!open || !product) return null;
   const handleAddToCart = async () => {
+    setIsAdding(true);
     try {
-      const variantId = product?.variants?.[0]?.id;
+      const variant = product?.variants?.[0];
+      const variantId = variant?.id;
 
       if (!variantId) {
         console.error("No variant found");
+        toast.error("No variant found for this product");
         return;
       }
 
-      await addToCart({
+      if (variant.manage_inventory && (variant.inventory_quantity ?? 0) < quantity) {
+        toast.error("This product is out of stock");
+        return;
+      }
+
+      if (!variant.price || variant.price <= 0) {
+        toast.error("This product is not priced for the selected region");
+        return;
+      }
+
+      const result = await addToCart({
         variantId,
         quantity,
-        countryCode: "in",
+        countryCode: DEFAULT_COUNTRY_CODE,
       });
+
+      if (!result.success) {
+        toast.error(result.error || "Unable to add item to cart");
+        return;
+      }
 
       toast.success(
         "Product successfully added to cart"
       );
     } catch (error) {
       console.error("Add to cart failed:", error);
+      toast.error(error instanceof Error ? error.message : "Unable to add item to cart");
+    } finally {
+      setIsAdding(false);
     }
   };
-  const [quantity, setQuantity] = useState(1);
   return (
     <div className="overlay" onClick={onClose}>
       <div
@@ -131,8 +157,16 @@ export default function QuickViewModal({
           </div>
 
           <div className="buttons">
-            <button className="outline" onClick={handleAddToCart}>
-              ADD TO CART
+            <button 
+                className="outline flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+                onClick={handleAddToCart}
+                disabled={isAdding}
+            >
+              {isAdding ? (
+                <div className="w-6 h-6 border-2 border-[#c97a4a] border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                "ADD TO CART"
+              )}
             </button>
 
             <button className="filled">

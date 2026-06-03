@@ -1,4 +1,5 @@
 import { sdk } from "@lib/config";
+import { getRegion } from "@lib/data/regions";
 import { ICommerceAdapter } from "./adapter.interface";
 import { Product, Cart, Order, Customer, ProductCategory, ProductCollection, CommerceFilters } from "../types/commerce.types";
 import { HttpTypes } from "@medusajs/types";
@@ -133,10 +134,9 @@ export class MedusaAdapter implements ICommerceAdapter {
   private async getRegionId(explicitRegionId?: string): Promise<string | undefined> {
     if (explicitRegionId) return explicitRegionId;
     try {
-      const { regions } = await sdk.client.fetch<HttpTypes.StoreRegionListResponse>(`/store/regions`, {
-        query: { limit: 1 },
-      });
-      return regions[0]?.id;
+      const countryCode = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us";
+      const region = await getRegion(countryCode);
+      return region?.id;
     } catch {
       return undefined;
     }

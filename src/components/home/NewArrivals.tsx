@@ -85,7 +85,7 @@ export default async function NewArrivals() {
         {/* View More */}
         <div className="flex justify-center mt-16">
           <Link
-            href="/store"
+            href="/shop"
             className="border border-[#c17f4a] text-[#c17f4a] text-xs font-bold tracking-widest uppercase px-12 py-4 hover:bg-[#c17f4a] hover:text-white transition-all duration-300"
           >
             VIEW MORE

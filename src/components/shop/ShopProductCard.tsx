@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 
 const PLACEHOLDER =
   'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=70';
+const DEFAULT_COUNTRY_CODE = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us";
 
 interface ShopProductCardProps {
   product: Product;
@@ -22,6 +23,7 @@ export default function ShopProductCard({
   price,
 }: ShopProductCardProps) {
   const [showQuickView, setShowQuickView] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   const thumbnail = product.thumbnail || PLACEHOLDER;
   const formattedPrice = `$${price.toFixed(2)}`;
@@ -30,26 +32,47 @@ export default function ShopProductCard({
   ) => {
     e.preventDefault();
     e.stopPropagation();
+    setIsAdding(true);
 
     try {
-      const variantId = product?.variants?.[0]?.id;
+      const variant = product?.variants?.[0];
+      const variantId = variant?.id;
 
       if (!variantId) {
         console.error("No variant found");
+        toast.error("No variant found for this product");
         return;
       }
 
-      await addToCart({
+      if (variant.manage_inventory && (variant.inventory_quantity ?? 0) < 1) {
+        toast.error("This product is out of stock");
+        return;
+      }
+
+      if (!variant.price || variant.price <= 0) {
+        toast.error("This product is not priced for the selected region");
+        return;
+      }
+
+      const result = await addToCart({
         variantId,
         quantity: 1,
-        countryCode: "in",
+        countryCode: DEFAULT_COUNTRY_CODE,
       });
+
+      if (!result.success) {
+        toast.error(result.error || "Unable to add item to cart");
+        return;
+      }
 
       toast.success(
   "Product successfully added to cart"
 );
     } catch (error) {
       console.error("Add to cart failed:", error);
+      toast.error(error instanceof Error ? error.message : "Unable to add item to cart");
+    } finally {
+      setIsAdding(false);
     }
   };
   return (
@@ -86,8 +109,12 @@ export default function ShopProductCard({
                 <FiSearch />
               </button>
 
-              <button className="action-btn" onClick={handleAddToCart}>
-                <FiShoppingCart />
+              <button className="action-btn" onClick={handleAddToCart} disabled={isAdding}>
+                {isAdding ? (
+                  <div className="w-4 h-4 border-2 border-[#c97a4a] border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <FiShoppingCart />
+                )}
               </button>
             </div>
           </div>
