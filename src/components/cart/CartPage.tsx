@@ -118,16 +118,16 @@ export default function CartPage({ cart }: CartPageProps) {
   }
 
   return (
-    <section className="bg-white min-h-screen py-20">
-      <div className="max-w-[1320px] mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-16">
+    <section className="bg-white min-h-screen py-10 lg:py-20">
+      <div className="max-w-[1320px] mx-auto px-4 lg:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 lg:gap-16">
           {/* LEFT */}
           <div>
-            <h1 className="text-[54px] font-bold text-[#222] mb-16">
+            <h1 className="text-[32px] lg:text-[54px] font-bold text-[#222] mb-10 lg:mb-16">
               Shopping Cart
             </h1>
 
-            <div className="grid grid-cols-[1fr_220px_120px] border-b border-[#e5e5e5] pb-5 text-[15px] font-semibold text-[#3a4651]">
+            <div className="hidden lg:grid lg:grid-cols-[1fr_220px_120px] border-b border-[#e5e5e5] pb-5 text-[15px] font-semibold text-[#3a4651]">
               <div>PRODUCT</div>
               <div>QUANTITY</div>
               <div>PRICE</div>
@@ -136,10 +136,11 @@ export default function CartPage({ cart }: CartPageProps) {
             {cartItems.map((item: any) => (
               <div
                 key={item.lineId}
-                className="grid grid-cols-[1fr_220px_120px_40px] items-center py-8 border-b border-[#f0f0f0]"
+                className="flex flex-col lg:grid lg:grid-cols-[1fr_220px_120px_40px] lg:items-center py-6 lg:py-8 border-b border-[#f0f0f0] gap-6 lg:gap-0 relative"
               >
-                <div className="flex items-center gap-7">
-                  <div className="relative w-[120px] h-[120px] bg-[#f7f7f7]">
+                {/* Product Info */}
+                <div className="flex items-center gap-4 lg:gap-7">
+                  <div className="relative w-[100px] h-[100px] lg:w-[120px] lg:h-[120px] bg-[#f7f7f7] flex-shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
@@ -148,74 +149,77 @@ export default function CartPage({ cart }: CartPageProps) {
                     />
                   </div>
 
-                  <div>
-                    <p className="text-[15px] text-[#8f8f8f] mb-2">
+                  <div className="flex-1">
+                    <p className="text-[14px] lg:text-[15px] text-[#8f8f8f] mb-1 lg:mb-2">
                       {item.category}
                     </p>
 
-                    <h3 className="text-[22px] font-bold text-[#222]">
+                    <h3 className="text-[18px] lg:text-[22px] font-bold text-[#222]">
                       {item.name}
                     </h3>
                   </div>
                 </div>
 
-                {/* Quantity */}
-                <div className="flex items-center gap-6">
-                  <button
-                    disabled={loadingAction?.id === item.lineId}
-                    onClick={() =>
-                      decreaseQuantity(
-                        item.lineId,
-                        item.quantity
-                      )
-                    }
-                    className="text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
-                  >
-                    -
-                  </button>
+                <div className="flex items-center justify-between lg:contents">
+                    {/* Quantity - on mobile shows label */}
+                    <div className="flex items-center gap-4 lg:gap-6">
+                      <span className="lg:hidden text-[14px] font-semibold text-[#3a4651]">QTY:</span>
+                      <button
+                        disabled={loadingAction?.id === item.lineId}
+                        onClick={() =>
+                          decreaseQuantity(
+                            item.lineId,
+                            item.quantity
+                          )
+                        }
+                        className="text-[22px] lg:text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
+                      >
+                        -
+                      </button>
 
-                  <div className="min-w-[40px] flex justify-center">
-                    {loadingAction?.id === item.lineId && loadingAction?.type === 'update' ? (
-                      <Loader2 className="animate-spin text-[#c97a4a]" size={20} />
-                    ) : (
-                      <span className="text-[18px] font-semibold text-center">
-                        {item.quantity}
-                      </span>
-                    )}
-                  </div>
+                      <div className="min-w-[30px] lg:min-w-[40px] flex justify-center">
+                        {loadingAction?.id === item.lineId && loadingAction?.type === 'update' ? (
+                          <Loader2 className="animate-spin text-[#c97a4a]" size={18} />
+                        ) : (
+                          <span className="text-[16px] lg:text-[18px] font-semibold text-center">
+                            {item.quantity}
+                          </span>
+                        )}
+                      </div>
 
-                  <button
-                    disabled={loadingAction?.id === item.lineId}
-                    onClick={() =>
-                      increaseQuantity(
-                        item.lineId,
-                        item.quantity
-                      )
-                    }
-                    className="text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
-                  >
-                    +
-                  </button>
+                      <button
+                        disabled={loadingAction?.id === item.lineId}
+                        onClick={() =>
+                          increaseQuantity(
+                            item.lineId,
+                            item.quantity
+                          )
+                        }
+                        className="text-[22px] lg:text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {/* Price */}
+                    <div className="text-[18px] lg:text-[22px] font-bold text-[#222]">
+                      ${Number(item.price*item.quantity).toFixed(2)}
+                    </div>
                 </div>
 
-                {/* Price */}
-                <div className="text-[22px] font-bold text-[#222]">
-                  ${Number(item.price*item.quantity).toFixed(2)}
-                </div>
-
-                {/* Remove */}
+                {/* Remove - absolutely positioned on mobile for better UI */}
                 <button
                   disabled={loadingAction?.id === item.lineId}
                   onClick={() =>
                     removeItem(item.lineId)
                   }
-                  className="w-7 h-7 flex items-center justify-center disabled:opacity-50"
+                  className="absolute top-4 right-0 lg:static w-7 h-7 flex items-center justify-center disabled:opacity-50"
                 >
                   {loadingAction?.id === item.lineId && loadingAction?.type === 'delete' ? (
                     <Loader2 className="animate-spin text-[#c97a4a]" size={20} />
                   ) : (
                     <X
-                      size={28}
+                      size={24}
                       className="text-[#999] hover:text-[#c97a4a]"
                     />
                   )}
@@ -225,13 +229,13 @@ export default function CartPage({ cart }: CartPageProps) {
           </div>
 
           {/* RIGHT */}
-          <div className="bg-[#f5f5f5]">
-            <div className="p-10">
-              <h2 className="text-[54px] font-bold text-[#222] mb-10">
+          <div className="bg-[#f5f5f5] h-fit">
+            <div className="p-6 lg:p-10">
+              <h2 className="text-[32px] lg:text-[54px] font-bold text-[#222] mb-8 lg:mb-10">
                 Cart Total
               </h2>
 
-              <div className="flex justify-between text-[18px] mb-8">
+              <div className="flex justify-between text-[16px] lg:text-[18px] mb-6 lg:mb-8">
                 <span className="font-medium">
                   Subtotal:
                 </span>
@@ -241,10 +245,10 @@ export default function CartPage({ cart }: CartPageProps) {
                 </span>
               </div>
 
-              <div className="border-t border-[#dddddd] mb-8" />
+              <div className="border-t border-[#dddddd] mb-6 lg:mb-8" />
 
               <div>
-                <div className="flex justify-between text-[18px]">
+                <div className="flex justify-between text-[16px] lg:text-[18px]">
                   <span className="font-medium">
                     Shipping:
                   </span>
@@ -254,15 +258,15 @@ export default function CartPage({ cart }: CartPageProps) {
                   </span>
                 </div>
 
-                <p className="text-[#888] text-[16px] leading-8 mt-5">
+                <p className="text-[#888] text-[15px] lg:text-[16px] leading-7 lg:leading-8 mt-4 lg:mt-5">
                   Shipping options will be
                   updated during checkout.
                 </p>
               </div>
 
-              <div className="border-t border-[#dddddd] my-8" />
+              <div className="border-t border-[#dddddd] my-6 lg:my-8" />
 
-              <div className="flex justify-between text-[20px]">
+              <div className="flex justify-between text-[18px] lg:text-[20px]">
                 <span className="font-semibold">
                   Total:
                 </span>

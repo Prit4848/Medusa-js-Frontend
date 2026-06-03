@@ -17,7 +17,7 @@ export default async function CategoryPage({
     adapter.listProducts({ limit: 100 }),
   ]);
 
-  const collections = collectionsResult?.collections ?? collectionsResult ?? [];
+  const collections = collectionsResult ?? [];
   const allProducts = allProductsResult?.products ?? [];
 
   const currentCategory = (categories as any[]).find(

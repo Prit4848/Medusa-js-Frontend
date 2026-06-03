@@ -54,17 +54,17 @@ export default function SaleBanner() {
   return (
     <section className="w-full bg-[#f5f5f5] overflow-hidden">
       <div className="max-w-[1360px] mx-auto px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 items-center min-h-[520px]">
+        <div className="grid lg:grid-cols-2 items-center min-h-[520px] gap-8 lg:gap-0">
 
           {/* LEFT */}
-          <div className="pt-14 pb-12">
+          <div className="pt-10 lg:pt-14 pb-8 lg:pb-12 order-2 lg:order-1">
 
-            <p className="text-[13px] font-bold tracking-[0.18em] uppercase text-[#222] mb-5">
+            <p className="text-[12px] lg:text-[13px] font-bold tracking-[0.18em] uppercase text-[#222] mb-4 lg:mb-5">
               News And Inspiration
             </p>
 
             <h2
-              className="text-[58px] font-[800] uppercase text-[#222] leading-none mb-6"
+              className="text-[36px] lg:text-[58px] font-[800] uppercase text-[#222] leading-none mb-6"
               style={{ letterSpacing: '-0.03em' }}
             >
               New Arrivals
@@ -73,7 +73,7 @@ export default function SaleBanner() {
             <div className="w-[70px] h-[5px] bg-[#c17f4a] rounded-full mb-8" />
 
             {/* COUNTDOWN */}
-            <div className="flex items-center gap-4 mb-10">
+            <div className="flex flex-wrap items-center gap-4 mb-10">
               {[
                 { value: timeLeft.days, label: 'Days' },
                 { value: timeLeft.hours, label: 'Hours' },
@@ -83,8 +83,10 @@ export default function SaleBanner() {
                 <div
                   key={label}
                   className="
-                    w-[68px]
-                    h-[68px]
+                    w-[60px]
+                    lg:w-[68px]
+                    h-[60px]
+                    lg:h-[68px]
                     border
                     border-[#d4d4d4]
                     bg-white
@@ -94,11 +96,11 @@ export default function SaleBanner() {
                     justify-center
                   "
                 >
-                  <span className="text-[22px] font-bold text-[#c17f4a] leading-none">
+                  <span className="text-[18px] lg:text-[22px] font-bold text-[#c17f4a] leading-none">
                     {String(value).padStart(2, '0')}
                   </span>
 
-                  <span className="text-[10px] text-[#8a8a8a] mt-1">
+                  <span className="text-[9px] lg:text-[10px] text-[#8a8a8a] mt-1">
                     {label}
                   </span>
                 </div>
@@ -107,11 +109,11 @@ export default function SaleBanner() {
 
             {/* PRICE */}
             <div className="flex items-end gap-4 mb-8">
-              <span className="text-[34px] text-[#8d8d8d] line-through leading-none">
+              <span className="text-[28px] lg:text-[34px] text-[#8d8d8d] line-through leading-none">
                 $140,56
               </span>
 
-              <span className="text-[42px] font-bold text-[#c17f4a] leading-none">
+              <span className="text-[36px] lg:text-[42px] font-bold text-[#c17f4a] leading-none">
                 $70
               </span>
             </div>
@@ -123,12 +125,15 @@ export default function SaleBanner() {
                 inline-flex
                 items-center
                 justify-center
-                h-[56px]
-                px-10
+                h-[50px]
+                lg:h-[56px]
+                px-8
+                lg:px-10
                 border
                 border-[#c17f4a]
                 text-[#c17f4a]
-                text-[14px]
+                text-[13px]
+                lg:text-[14px]
                 font-semibold
                 tracking-[0.08em]
                 uppercase
@@ -143,38 +148,35 @@ export default function SaleBanner() {
           </div>
 
           {/* RIGHT */}
-          <div className="relative hidden lg:flex items-center justify-center h-full">
+          <div className="relative flex items-center justify-center h-[300px] lg:h-full order-1 lg:order-2 mt-8 lg:mt-0">
 
             {/* Background Circle */}
             <div
               className="
                 absolute
-                right-6
+                left-1/2 lg:left-auto lg:right-6
                 top-1/2
+                -translate-x-1/2 lg:translate-x-0
                 -translate-y-1/2
                 rounded-full
                 bg-[#dddddd]
               "
               style={{
-                width: '460px',
-                height: '460px',
+                width: 'min(90vw, 460px)',
+                height: 'min(90vw, 460px)',
               }}
             />
 
             {/* Product Image */}
             <div
-              className="relative z-10"
-              style={{
-                width: '520px',
-                height: '420px',
-              }}
+              className="relative z-10 w-[280px] lg:w-[520px] h-[240px] lg:h-[420px]"
             >
               <Image
                 src="/images/products/saleBanner.png"
                 alt="New Arrivals"
                 fill
                 priority
-                sizes="520px"
+                sizes="(max-width: 1024px) 280px, 520px"
                 className="object-contain object-center"
               />
             </div>
@@ -184,4 +186,4 @@ export default function SaleBanner() {
       </div>
     </section>
   );
-}
+  }

@@ -34,13 +34,13 @@ export default async function NewArrivals() {
   };
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 lg:py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">New Arrivals</h2>
-          <p className="text-gray-500 text-base max-w-4xl mx-auto leading-relaxed">
+        <div className="text-center mb-10 lg:mb-12">
+          <h2 className="text-[28px] lg:text-3xl font-bold text-gray-900 mb-4">New Arrivals</h2>
+          <p className="text-gray-500 text-[15px] lg:text-base max-w-4xl mx-auto leading-relaxed">
             Check out our new furniture collection! Cozy sofa, fancy chair, wooden casket,
             and many more. The new collection brings an informal elegance to your home.
           </p>
@@ -50,7 +50,7 @@ export default async function NewArrivals() {
         {products.length === 0 ? (
           <p className="text-center text-gray-400">No products found.</p>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 lg:gap-y-12">
             {products.map((product) => (
               <Link
                 key={product.id}

@@ -116,15 +116,17 @@ export default function ShopPage({ products, categories, collections }: ShopPage
   }, [products]);
 
   return (
-    <div className="flex bg-[#fafafa] min-h-screen max-w-[1600px] mx-auto">
-      <ShopSidebar
-        filters={filters}
-        onFiltersChange={setFilters}
-        categories={categories}
-        collections={collections}
-        priceMaxLimit={priceMaxLimit}
-        currencyCode={currencyCode}
-      />
+    <div className="flex flex-col lg:flex-row bg-[#fafafa] min-h-screen max-w-[1600px] mx-auto">
+      <div className="w-full lg:w-auto">
+        <ShopSidebar
+          filters={filters}
+          onFiltersChange={setFilters}
+          categories={categories}
+          collections={collections}
+          priceMaxLimit={priceMaxLimit}
+          currencyCode={currencyCode}
+        />
+      </div>
       <ShopProductGrid
         products={filteredProducts}
         totalProducts={products.length}
@@ -134,4 +136,4 @@ export default function ShopPage({ products, categories, collections }: ShopPage
       />
     </div>
   );
-}
+  }

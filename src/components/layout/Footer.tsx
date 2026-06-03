@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import {
   FaGoogle,
@@ -9,16 +7,20 @@ import {
 } from 'react-icons/fa';
 
 export default function Footer() {
+  async function subscribeAction() {
+    "use server";
+  }
+
   return (
     <footer className=" text-white bg-[#1a1a1a]">
       <div className="max-w-[1320px] mx-auto px-6">
 
         {/* TOP NEWSLETTER */}
-        <div className="flex items-start justify-between pt-[32px] pb-[32px] border-b border-[#3a3a3a]">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between pt-8 pb-8 border-b border-[#3a3a3a] gap-8">
 
           {/* LEFT */}
           <div className="max-w-[520px]">
-            <h3 className="text-[22px] font-bold mb-4">
+            <h3 className="text-[20px] lg:text-[22px] font-bold mb-4">
               Many desktop publishing
             </h3>
 
@@ -31,18 +33,18 @@ export default function Footer() {
 
           {/* RIGHT */}
           <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex items-center gap-4 mt-1"
+            action={subscribeAction}
+            className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto"
           >
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-[300px] h-[56px] bg-[#f5f5f5] px-7 text-[16px] text-black outline-none placeholder:text-[#cfcfcf]"
+              className="w-full sm:w-[300px] h-[56px] bg-[#f5f5f5] px-7 text-[16px] text-black outline-none placeholder:text-[#cfcfcf]"
             />
 
             <button
               type="submit"
-              className="w-[180px] h-[56px] bg-[#c47c48] text-white text-[16px] font-semibold hover:bg-[#b36d3c] transition-colors duration-300"
+              className="w-full sm:w-[180px] h-[56px] bg-[#c47c48] text-white text-[16px] font-semibold hover:bg-[#b36d3c] transition-colors duration-300"
             >
               Subscribe
             </button>
@@ -50,7 +52,7 @@ export default function Footer() {
         </div>
 
         {/* MAIN FOOTER */}
-        <div className="grid grid-cols-[1.7fr_1fr_1fr_1fr] gap-12 py-[42px] border-b border-[#3a3a3a]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.7fr_1fr_1fr_1fr] gap-12 py-[42px] border-b border-[#3a3a3a]">
 
           {/* LEFT */}
           <div>

@@ -19,7 +19,7 @@ export default function TopSellingProducts() {
                 </div>
 
                 {/* Product Grid */}
-                <div className="grid grid-cols-[1.55fr_1fr] gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-6">
 
                     {/* Large Card */}
                     <ProductCard
@@ -31,7 +31,7 @@ export default function TopSellingProducts() {
                     />
 
                     {/* Right Side */}
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
                         {/* Online Exclusive */}
                         <ProductCard

@@ -53,7 +53,7 @@ export default function HeroSlider() {
     }, [next]);
 
     return (
-        <section className="relative w-full h-[78vh] min-h-[620px] overflow-hidden bg-[#ede9e3]">
+        <section className="relative w-full h-[60vh] lg:h-[78vh] min-h-[400px] lg:min-h-[620px] overflow-hidden bg-[#ede9e3]">
             {/* Background Images */}
             {slides.map((slide, index) => (
                 <div
@@ -63,34 +63,34 @@ export default function HeroSlider() {
                         opacity: index === current ? 1 : 0,
                         backgroundImage: `url(${slide.bg})`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center right',
+                        backgroundPosition: 'center center',
                     }}
                 />
             ))}
 
             {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/40 lg:via-white/30 to-transparent" />
 
             {/* Content */}
            <div
-  className="relative z-10 h-full flex items-start pt-[135px]"
+  className="relative z-10 h-full flex items-start pt-[80px] lg:pt-[135px]"
                 style={{
                     opacity: animating ? 0 : 1,
                     transition: 'opacity 0.4s ease',
                 }}
             >
-                <div className="max-w-[1320px] mx-auto pl-[25px] pr-8 w-full">
+                <div className="max-w-[1320px] mx-auto px-6 lg:px-8 lg:pl-[25px] w-full">
                     {/* Small Label */}
-                    <p className="text-[14px] font-[800] tracking-[0.08em] uppercase text-[#c17f4a] mb-6">
+                    <p className="text-[12px] lg:text-[14px] font-[800] tracking-[0.08em] uppercase text-[#c17f4a] mb-4 lg:mb-6">
                         {slides[current].eyebrow}
                     </p>
 
-                    <h1 className="mb-10 text-[#222] max-w-[700px]">
-                        <span className="block text-[34px] lg:text-[40px] leading-none font-light">
+                    <h1 className="mb-6 lg:mb-10 text-[#222] max-w-[700px]">
+                        <span className="block text-[28px] lg:text-[40px] leading-none font-light">
                             get all
                         </span>
 
-                        <span className="block mt-3 text-[45px] lg:text-[48px] leading-[0.95] font-[800] uppercase">
+                        <span className="block mt-3 text-[36px] lg:text-[48px] leading-[0.95] font-[800] uppercase">
                             THE GOOD STUFF
                         </span>
                     </h1>
@@ -101,12 +101,15 @@ export default function HeroSlider() {
     inline-flex
     items-center
     gap-4
-    h-[64px]
-    px-14
+    h-[54px]
+    lg:h-[64px]
+    px-10
+    lg:px-14
     border
     border-[#c17f4a]
     text-[#c17f4a]
-    text-[15px]
+    text-[14px]
+    lg:text-[15px]
     font-semibold
     tracking-[0.02em]
     transition-all
@@ -118,7 +121,7 @@ export default function HeroSlider() {
                         VIEW MORE
 
                         <svg
-                            className="w-6 h-6"
+                            className="w-5 h-5 lg:w-6 lg:h-6"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -138,10 +141,10 @@ export default function HeroSlider() {
             <button
                 onClick={prev}
                 aria-label="Previous slide"
-                className="absolute left-8 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-[#c17f4a] transition-colors"
+                className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 text-black/50 lg:text-white/70 hover:text-[#c17f4a] transition-colors"
             >
                 <svg
-                    className="w-14 h-14"
+                    className="w-10 h-10 lg:w-14 lg:h-14"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -159,10 +162,10 @@ export default function HeroSlider() {
             <button
                 onClick={next}
                 aria-label="Next slide"
-                className="absolute right-8 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-[#c17f4a] transition-colors"
+                className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 text-black/50 lg:text-white/70 hover:text-[#c17f4a] transition-colors"
             >
                 <svg
-                    className="w-14 h-14"
+                    className="w-10 h-10 lg:w-14 lg:h-14"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

@@ -21,7 +21,7 @@ export default function ProductCard({
   return (
     <div
       className={`relative overflow-hidden group bg-white ${
-        large ? 'h-[500px]' : 'h-[235px]'
+        large ? 'h-[400px] lg:h-[500px]' : 'h-[235px]'
       }`}
     >
       <Image
@@ -33,18 +33,18 @@ export default function ProductCard({
 
       {/* Large Card */}
       {large && (
-        <div className="absolute top-14 left-10 z-10">
-          <p className="text-[#c17f4a] text-[13px] font-bold uppercase tracking-[0.08em] mb-4">
+        <div className="absolute top-10 lg:top-14 left-6 lg:left-10 z-10">
+          <p className="text-[#c17f4a] text-[12px] lg:text-[13px] font-bold uppercase tracking-[0.08em] mb-3 lg:mb-4">
             {subtitle}
           </p>
 
-          <h3 className="text-[30px] font-bold uppercase text-[#c17f4a] leading-none mb-4">
+          <h3 className="text-[24px] lg:text-[30px] font-bold uppercase text-[#c17f4a] leading-none mb-3 lg:mb-4">
             {title}
           </h3>
 
-          <div className="w-[36px] h-[3px] bg-[#c17f4a] mb-6" />
+          <div className="w-[30px] lg:w-[36px] h-[3px] bg-[#c17f4a] mb-4 lg:mb-6" />
 
-          <p className="text-[14px] text-[#666666] font-light">
+          <p className="text-[13px] lg:text-[14px] text-[#666666] font-light">
             {description}
           </p>
         </div>

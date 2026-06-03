@@ -103,10 +103,10 @@ export default function ProductDetails({
     return (
 
         <>
-            <div className="max-w-[1280px] mx-auto px-4 py-12">
+            <div className="max-w-[1280px] mx-auto px-4 lg:px-6 py-8 lg:py-12">
 
                 {/* Breadcrumb */}
-                <div className="border-b border-gray-200 pb-8 mb-10 text-[15px] text-gray-400 flex items-center gap-2">
+                <div className="border-b border-gray-200 pb-6 lg:pb-8 mb-8 lg:mb-10 text-[13px] lg:text-[15px] text-gray-400 flex flex-wrap items-center gap-2">
                     <Link
                         href="/shop"
                         className="hover:text-[#c87a4c]"
@@ -125,10 +125,10 @@ export default function ProductDetails({
 
                     <span>&gt;</span>
 
-                    <span>{product.title}</span>
+                    <span className="text-[#222] truncate max-w-[150px] lg:max-w-none">{product.title}</span>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
 
                     {/* Left Image */}
                     <div className="bg-[#f7f6f4] aspect-square relative">
@@ -137,36 +137,37 @@ export default function ProductDetails({
                             alt={product.title}
                             fill
                             className="object-cover"
+                            sizes="(max-width: 1024px) 100vw, 50vw"
                         />
                     </div>
 
                     {/* Right Content */}
                     <div>
 
-                        <p className="text-[12px] text-gray-500 mb-8">
+                        <p className="text-[12px] text-gray-500 mb-4 lg:mb-8">
                             {product.category}
                         </p>
 
-                        <h1 className="text-[38px] font-bold text-[#222] mb-8">
+                        <h1 className="text-[28px] lg:text-[38px] font-bold text-[#222] mb-6 lg:mb-8 leading-tight">
                             {product.title}
                         </h1>
 
-                        <div className="flex items-center gap-3 mb-10">
-                            <span className="text-[#d8a46c] text-xl">
+                        <div className="flex items-center gap-3 mb-8 lg:mb-10">
+                            <span className="text-[#d8a46c] text-lg lg:text-xl">
                                 ★★★★★
                             </span>
 
-                            <span className="text-[#c87a4c] text-lg">
+                            <span className="text-[#c87a4c] text-base lg:text-lg">
                                 4 reviews
                             </span>
                         </div>
 
-                        <p className="text-[#666] text-[12px] leading-[2] mb-12">
+                        <p className="text-[#666] text-[14px] lg:text-[12px] leading-[1.8] lg:leading-[2] mb-10 lg:mb-12">
                             {product.description ||
                                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod orci."}
                         </p>
 
-                        <div className="flex gap-24 mb-14">
+                        <div className="flex flex-col sm:flex-row gap-10 lg:gap-24 mb-10 lg:mb-14">
 
                             <div>
                                 <p className="font-bold text-[12px] mb-4">
@@ -181,7 +182,7 @@ export default function ProductDetails({
                                                 Math.max(1, prev - 1)
                                             )
                                         }
-                                        className="w-8 h-8 border rounded hover:bg-gray-100"
+                                        className="w-10 h-10 lg:w-8 lg:h-8 border rounded hover:bg-gray-100 flex items-center justify-center"
                                     >
                                         -
                                     </button>
@@ -195,7 +196,7 @@ export default function ProductDetails({
                                         onClick={() =>
                                             setQuantity((prev) => prev + 1)
                                         }
-                                        className="w-8 h-8 border rounded hover:bg-gray-100"
+                                        className="w-10 h-10 lg:w-8 lg:h-8 border rounded hover:bg-gray-100 flex items-center justify-center"
                                     >
                                         +
                                     </button>
@@ -206,17 +207,17 @@ export default function ProductDetails({
                                     PRICE
                                 </p>
 
-                                <p className="font-semibold text-[22px]">
+                                <p className="font-semibold text-[22px] lg:text-[22px]">
                                     {formattedPrice}
                                 </p>
                             </div>
 
                         </div>
 
-                        <div className="flex gap-6">
+                        <div className="flex flex-col sm:flex-row gap-4 lg:gap-6">
 
                             <button
-                                className="w-[280px] h-[68px] border border-[#c87a4c] text-[#c87a4c] font-semibold uppercase tracking-wide hover:bg-[#c87a4c] hover:text-white transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full sm:w-[280px] h-[60px] lg:h-[68px] border border-[#c87a4c] text-[#c87a4c] font-semibold uppercase tracking-wide hover:bg-[#c87a4c] hover:text-white transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={handleAddToCart}
                                 disabled={isAdding}
                             >
@@ -228,7 +229,7 @@ export default function ProductDetails({
                             </button>
 
                             <button
-                                className="w-full h-[68px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-[60px] lg:h-[68px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={handleBuyNow}
                                 disabled={isBuying}
                             >

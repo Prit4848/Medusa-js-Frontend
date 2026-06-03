@@ -7,6 +7,7 @@ import {
   Heart,
 } from 'lucide-react';
 import { retrieveCart } from "@lib/data/cart";
+import MobileMenu from './MobileMenu';
 
 export default async function Navbar() {
   const cart = await retrieveCart();
@@ -20,20 +21,21 @@ export default async function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#f5f5f5] border-b border-gray-200">
-      <div className="max-w-[1320px] mx-auto px-6 h-[75px] flex items-center justify-between">
+      <div className="max-w-[1320px] mx-auto px-4 lg:px-6 h-[75px] flex items-center justify-between">
 
-        {/* LEFT — LOGO */}
-        <div className="w-1/4">
+        {/* LEFT — LOGO & MOBILE MENU */}
+        <div className="flex-1 lg:w-1/4 flex items-center gap-2">
+          <MobileMenu cartCount={cartCount} />
           <Link
             href="/"
-            className="text-[24px] font-bold tracking-[-0.5px] text-black"
+            className="text-[20px] lg:text-[24px] font-bold tracking-[-0.5px] text-black"
           >
             Flatlogic
           </Link>
         </div>
 
-        {/* CENTER — NAV */}
-        <nav className="w-2/4 flex items-center justify-center gap-12">
+        {/* CENTER — NAV (Desktop) */}
+        <nav className="hidden lg:flex w-2/4 items-center justify-center gap-12">
 
           <Link
             href="/"
@@ -138,21 +140,21 @@ export default async function Navbar() {
         </nav>
 
         {/* RIGHT — ICONS */}
-        <div className="w-1/4 flex items-center justify-end gap-10 text-black">
+        <div className="flex-1 lg:w-1/4 flex items-center justify-end gap-4 lg:gap-10 text-black">
 
-          <button className="hover:text-[#c47c48] transition-colors duration-300">
+          <button className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300">
             <Search size={22} strokeWidth={1.8} />
           </button>
 
            <Link
             href="/login"
-            className="hover:text-[#c47c48] transition-colors duration-300">
+            className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300">
             <User size={22} strokeWidth={1.8} />
           </Link>
 
           <Link
             href="/wishlist"
-            className="hover:text-[#c47c48] transition-colors duration-300"
+            className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300"
           >
             <Heart size={22} strokeWidth={1.8} />
           </Link>

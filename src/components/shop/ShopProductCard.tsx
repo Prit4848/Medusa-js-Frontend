@@ -111,9 +111,10 @@ export default function ShopProductCard({ product, price }: ShopProductCardProps
             <div className="
               absolute top-1/2 -translate-y-1/2
               flex flex-col gap-2
-              opacity-0 right-[-8px]
+              opacity-100 right-3
+              lg:opacity-0 lg:right-[-8px]
               transition-all duration-300 ease-in-out
-              group-hover:opacity-100 group-hover:right-3
+              lg:group-hover:opacity-100 lg:group-hover:right-3
             ">
               {/* Heart — now wired to wishlist */}
               <button

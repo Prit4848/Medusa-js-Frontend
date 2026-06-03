@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { Range } from 'react-range';
 import { ProductCategory, ProductCollection } from '@/middleware/types/commerce.types';
 import { ShopFilters } from './ShopPage';
 import { convertToLocale } from "@lib/util/money";
+import { Filter, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ShopSidebarProps {
   filters: ShopFilters;
@@ -24,6 +26,8 @@ export default function ShopSidebar({
   priceMaxLimit,
   currencyCode,
 }: ShopSidebarProps) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   const toggle = (arr: string[], item: string): string[] =>
     arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item];
 
@@ -43,8 +47,23 @@ export default function ShopSidebar({
   const formattedMax = convertToLocale({ amount: filters.priceMax, currency_code: currencyCode });
 
   return (
+    <aside className="w-full lg:w-[310px] lg:min-w-[310px] px-6 lg:px-[32px] py-4 lg:py-[42px] bg-[#fafafa] border-b lg:border-b-0 lg:border-r border-[#ececec] flex-shrink-0">
 
-    <aside className="w-[310px] min-w-[310px] px-[32px] py-[42px] bg-[#fafafa] border-r border-[#ececec] flex-shrink-0">
+      {/* Mobile Toggle Button */}
+      <button
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="lg:hidden flex items-center justify-between w-full py-4 text-[#222] font-bold text-[18px]"
+      >
+        <div className="flex items-center gap-2">
+          <Filter size={20} />
+          <span>Filters</span>
+        </div>
+        {isMobileOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </button>
+
+      <div className={`lg:sticky lg:top-[120px] ${isMobileOpen ? 'block' : 'hidden lg:block'}`}>
+        <h2 className="hidden lg:block text-[20px] font-bold mb-6 text-[#222]">Filters</h2>
+
 
       {/* Categories */}
       {categories.length > 0 && (
@@ -184,6 +203,8 @@ export default function ShopSidebar({
         ))}
       </div>
 
+    </div>
+
     </aside>
-  );
-}
+    );
+    }
