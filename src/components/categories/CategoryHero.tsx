@@ -10,8 +10,8 @@ export default function CategoryHero({
   title = "NEW ARRIVALS",
 }: CategoryHeroProps) {
   return (
-    <section className="w-full py-4 px-[14%]">
-      <div className="relative w-full h-[530px] overflow-hidden">
+    <section className="w-full py-4 px-4 sm:px-[14%]">
+      <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[530px] overflow-hidden">
         <Image
           src={imageUrl}
           alt="Category hero"

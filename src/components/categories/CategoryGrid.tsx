@@ -67,9 +67,9 @@ export default function CategoryGrid({
   tiles = DEFAULT_TILES,
 }: CategoryGridProps) {
   return (
-    <section className="max-w-[1280px] mx-auto py-8">
+    <section className="max-w-[1280px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Top Row */}
-      <div className="grid grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8">
         {tiles.slice(0, 2).map((tile) => (
           <PromoBannerCard
             key={tile.id}
@@ -80,7 +80,7 @@ export default function CategoryGrid({
       </div>
 
       {/* Bottom Row */}
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
         {tiles.slice(2, 5).map((tile) => (
           <PromoBannerCard
             key={tile.id}
@@ -102,8 +102,8 @@ function PromoBannerCard({
 }) {
   const height =
     row === 1
-      ? "h-[240px]"
-      : "h-[210px]";
+      ? "h-[200px] sm:h-[240px]"
+      : "h-[180px] sm:h-[210px]";
 
   const isLabelCard =
     tile.variant === "label-cta";
@@ -126,7 +126,7 @@ function PromoBannerCard({
             src={tile.imageUrl}
             alt={tile.imageAlt}
             fill
-            sizes="30vw"
+            sizes="(max-width: 640px) 42vw, (max-width: 1024px) 21vw, 15vw"
             className="
               object-cover
               object-center
@@ -140,7 +140,7 @@ function PromoBannerCard({
           src={tile.imageUrl}
           alt={tile.imageAlt}
           fill
-          sizes="50vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="
             object-cover
             object-center
@@ -153,18 +153,18 @@ function PromoBannerCard({
 
       {/* SPRING SALE */}
       {tile.variant === "badge" && (
-        <div className="absolute inset-0 flex items-center justify-end pr-10">
+        <div className="absolute inset-0 flex items-center justify-end pr-6 sm:pr-10">
           <span
             className="
               bg-[#1e1e1e]
               text-white
               uppercase
               font-semibold
-              px-10
-              py-5
+              px-6 sm:px-10
+              py-3 sm:py-5
             "
             style={{
-              fontSize: "14px",
+              fontSize: "clamp(12px, 2vw, 14px)",
               letterSpacing: "0.18em",
             }}
           >
@@ -176,17 +176,13 @@ function PromoBannerCard({
       {/* ACCESSORIES */}
       {tile.variant === "label-cta" && (
         <div
-          className="absolute left-11 z-10 max-w-[50%]"
-          style={
-            row === 1
-              ? { top: "50%", transform: "translateY(-50%)" }
-              : { top: "50%", transform: "translateY(-50%)" }
-          }
+          className="absolute left-6 sm:left-11 z-10 max-w-[50%]"
+          style={{ top: "50%", transform: "translateY(-50%)" }}
         >
           <p
-            className="mb-3 uppercase"
+            className="mb-1 sm:mb-3 uppercase"
             style={{
-              fontSize: "11px",
+              fontSize: "clamp(9px, 1.5vw, 11px)",
               fontWeight: 500,
               letterSpacing: "0.22em",
               color: "#222",
@@ -196,12 +192,9 @@ function PromoBannerCard({
           </p>
 
           <h2
-            className="text-[#222] mb-5"
+            className="text-[#222] mb-2 sm:mb-5"
             style={{
-              fontSize:
-                row === 1
-                  ? "32px"
-                  : "28px",
+              fontSize: "clamp(18px, 3vw, 32px)",
               fontWeight: 600,
               lineHeight: "1.15",
             }}
@@ -212,7 +205,7 @@ function PromoBannerCard({
           <span
             style={{
               color: "#c27a4a",
-              fontSize: "15px",
+              fontSize: "clamp(13px, 1.5vw, 15px)",
               fontWeight: 500,
             }}
           >
@@ -223,11 +216,11 @@ function PromoBannerCard({
 
       {/* PILLOWS */}
       {tile.variant === "discount-title" && (
-        <div className="absolute left-7 top-1/2 -translate-y-1/2">
+        <div className="absolute left-6 sm:left-7 top-1/2 -translate-y-1/2">
           <p
-            className="mb-2"
+            className="mb-1 sm:mb-2"
             style={{
-              fontSize: "15px",
+              fontSize: "clamp(13px, 1.5vw, 15px)",
               color: "#c27a4a",
               fontWeight: 500,
             }}
@@ -238,7 +231,7 @@ function PromoBannerCard({
           <h2
             className="text-[#222]"
             style={{
-              fontSize: "32px",
+              fontSize: "clamp(20px, 3vw, 32px)",
               fontWeight: 600,
               lineHeight: 1,
             }}
@@ -254,7 +247,7 @@ function PromoBannerCard({
           <h2
             className="text-white"
             style={{
-              fontSize: "32px",
+              fontSize: "clamp(20px, 3vw, 32px)",
               fontWeight: 600,
               lineHeight: 1,
             }}
@@ -266,3 +259,4 @@ function PromoBannerCard({
     </Link>
   );
 }
+

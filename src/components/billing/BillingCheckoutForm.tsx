@@ -20,8 +20,7 @@ export default function BillingCheckoutForm({ children }: BillingCheckoutFormPro
   return (
     <form
       action={action}
-      className="grid gap-8"
-      style={{ gridTemplateColumns: "1fr 320px" }}
+      className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8"
     >
       {/* We pass isPending to children via context or clones if needed, 
           but better to just use a SubmitButton component inside children. */}

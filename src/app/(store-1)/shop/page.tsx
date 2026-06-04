@@ -36,7 +36,7 @@ async function ShopContent() {
       />
     );
   } catch (error) {
-    console.error('Error fetching shop data:', error);
+  
     return <div>Error loading shop. Please try again later.</div>;
   }
 }

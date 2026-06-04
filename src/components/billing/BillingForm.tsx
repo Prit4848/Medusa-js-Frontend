@@ -26,7 +26,7 @@ export default function BillingForm({
         <Field label="First Name*" name="first_name" />
 
         {/* Country + City */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SelectField
             label="Country*"
             name="country_code"
@@ -37,13 +37,13 @@ export default function BillingForm({
         </div>
 
         {/* Street + Apt/Suite */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Street" name="address_1" />
           <Field label="Apt / Suite / Other" name="address_2" />
         </div>
 
         {/* Postcode + Phone + ZIP */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field label="Postcode" name="postal_code" />
           <Field label="Phone" name="phone" placeholder="+ 375 (29)" />
           <Field label="ZIP Code" name="zip" />

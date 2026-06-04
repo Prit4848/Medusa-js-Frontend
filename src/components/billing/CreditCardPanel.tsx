@@ -6,11 +6,12 @@ interface CreditCardPanelProps {
 }
 
 export default function CreditCardPanel({ paymentMethod }: CreditCardPanelProps) {
-  const isCreditCard = paymentMethod === "credit-card";
+  const isManual = paymentMethod.includes("manual") || paymentMethod === "cash";
+  const isCreditCard = !isManual;
 
   return (
     <div
-      className="p-7"
+      className="p-4 sm:p-7"
       style={{ backgroundColor: "#f5f5f5" }}
     >
       {isCreditCard && (
@@ -92,8 +93,8 @@ export default function CreditCardPanel({ paymentMethod }: CreditCardPanelProps)
             </div>
 
             {/* CVV + Set as default */}
-            <div className="flex items-end gap-4">
-              <div className="flex-none" style={{ width: "130px" }}>
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-none w-full sm:w-[130px]">
                 <label
                   className="block text-[#222] mb-2"
                   style={{ fontSize: "13px", fontWeight: 400 }}
@@ -132,7 +133,7 @@ export default function CreditCardPanel({ paymentMethod }: CreditCardPanelProps)
                   style={{ fontSize: "12px" }}
                 >
                   Set as default
-                  <br />
+                  <br className="hidden sm:block" />
                   payment method
                 </label>
               </div>

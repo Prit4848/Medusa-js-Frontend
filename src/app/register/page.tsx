@@ -18,19 +18,19 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex">
+        <div className="min-h-screen flex flex-col lg:flex-row">
 
             {/* LEFT — Form */}
-            <div className="w-[50%] flex flex-col justify-between px-16 py-12 bg-white">
+            <div className="w-full lg:w-1/2 flex flex-col justify-between px-6 sm:px-12 lg:px-16 py-8 lg:py-12 bg-white min-h-[100vh]">
 
                 {/* Logo */}
-                <Link href="/" className="text-[30px] font-bold tracking-tight text-black">
+                <Link href="/" className="text-[22px] font-bold tracking-tight text-black mb-8 lg:mb-0">
                     Flatlogic<span className="text-[#c97a4a]">.</span>
                 </Link>
 
                 {/* Form */}
-                <div className="w-full max-w-[480px]">
-                    <h1 className="text-[22px] font-bold text-[#222] mb-10">Sign Up</h1>
+                <div className="w-full max-w-[480px] mx-auto lg:mx-0 py-8 lg:py-0">
+                    <h1 className="text-[20px] lg:text-[22px] font-bold text-[#222] mb-6 lg:mb-10 text-center lg:text-left">Sign Up</h1>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
@@ -85,13 +85,13 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between mt-4">
-                            <Link href="/login" className="text-[14px] text-[#c97a4a] hover:underline">
+                        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-4">
+                            <Link href="/login" className="text-[14px] text-[#c97a4a] hover:underline order-2 sm:order-1">
                                 Log In to your account
                             </Link>
                             <button
                                 type="submit"
-                                className="w-[180px] h-[52px] bg-[#c97a4a] text-white text-[14px] font-bold tracking-widest hover:opacity-90 transition"
+                                className="w-full sm:w-[180px] h-[52px] bg-[#c97a4a] text-white text-[14px] font-bold tracking-widest hover:opacity-90 transition order-1 sm:order-2"
                             >
                                 SIGN UP
                             </button>
@@ -101,7 +101,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Footer links */}
-                <div className="flex gap-10">
+                <div className="flex gap-10  ">
                     <Link href="/" className="text-[13px] text-[#c97a4a] hover:text-[#999] transition">
                         Terms & Conditions
                     </Link>
@@ -115,7 +115,7 @@ export default function RegisterPage() {
             </div>
 
             {/* RIGHT — Image */}
-            <div className="relative w-[50%]">
+            <div className="relative w-full lg:w-1/2 h-[300px] lg:h-auto">
                 <Image
                     src="/images/blog/image4.png"
                     alt="Login"

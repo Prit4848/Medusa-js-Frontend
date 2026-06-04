@@ -14,11 +14,6 @@ export const sdk = new Medusa({
   publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 })
 
-console.log("Medusa SDK Initialized with:", {
-  baseUrl: MEDUSA_BACKEND_URL,
-  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ? "EXISTS" : "MISSING",
-});
-
 const originalFetch = sdk.client.fetch.bind(sdk.client)
 
 sdk.client.fetch = async <T>(
@@ -56,15 +51,6 @@ sdk.client.fetch = async <T>(
     parsedBody = init.body
   }
 
-  console.log(`Medusa fetch: ${input}`, {
-    method: init.method || "GET",
-    headers: newHeaders,
-    body: parsedBody,
-  });
-
-
-
-
   try {
     const response = await originalFetch(input, init);
     return response as T;
@@ -83,14 +69,6 @@ sdk.client.fetch = async <T>(
       } catch {}
     }
 
-    console.error("Medusa fetch error:", {
-      url: input,
-      status: error.status,
-      statusText: error.statusText,
-      message: error.message,
-      data: errorData,
-      publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ? "EXISTS" : "MISSING",
-    });
     throw error;
   }
 

@@ -14,7 +14,6 @@ export default async function NewArrivals() {
     const result = await adapter.listProducts({ limit: 4 });
     products = result.products;
   } catch (error) {
-    console.error("Error fetching products:", error);
     products = [];
   }
 

@@ -3,17 +3,27 @@ import Link from "next/link";
 
 interface PaymentMethodsProps {
   selected: string;
+  providers: any[];
 }
 
-const methods = [
-  { id: "credit-card", title: "Credit Card" },
-  { id: "cash", title: "Cash" },
-];
+const mapProviderTitle = (id: string) => {
+  if (id.includes("stripe")) return "Credit Card";
+  if (id.includes("manual")) return "Cash";
+  return id.charAt(0).toUpperCase() + id.slice(1).replace(/_/g, " ");
+};
 
-export default function PaymentMethods({ selected }: PaymentMethodsProps) {
+export default function PaymentMethods({ selected, providers }: PaymentMethodsProps) {
+  // If no providers from backend, fallback to some defaults to avoid empty UI
+  const displayMethods = providers.length > 0 
+    ? providers.map(p => ({ id: p.id, title: mapProviderTitle(p.id) }))
+    : [
+        { id: "credit-card", title: "Credit Card" },
+        { id: "cash", title: "Cash" },
+      ];
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {methods.map((method) => {
+      {displayMethods.map((method) => {
         const active = selected === method.id;
 
         return (

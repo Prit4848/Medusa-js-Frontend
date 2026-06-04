@@ -192,8 +192,7 @@ export async function updateLineItem({
   const headers = {
     ...(await getAuthHeaders()),
   }
-  console.log("cartId", cartId)
-console.log("lineId", lineId)
+
   await sdk.store.cart
     .updateLineItem(cartId, lineId, { quantity }, {}, headers)
     .then(async () => {
@@ -204,7 +203,6 @@ console.log("lineId", lineId)
       revalidateTag(fulfillmentCacheTag)
     })
     .catch((err) => {
-  console.log("FULL ERROR")
   console.dir(err, { depth: null })
   throw err
 })
@@ -235,7 +233,7 @@ export async function deleteLineItem(lineId: string) {
       revalidateTag(fulfillmentCacheTag)
     })
     .catch((err) => {
-  console.log("FULL ERROR")
+
   console.dir(err, { depth: null })
   throw err
 })
@@ -254,9 +252,10 @@ export async function setShippingMethod({
 
   return sdk.store.cart
     .addShippingMethod(cartId, { option_id: shippingMethodId }, {}, headers)
-    .then(async () => {
+    .then(async ({ cart }: { cart: HttpTypes.StoreCart }) => {
       const cartCacheTag = await getCacheTag("carts")
       revalidateTag(cartCacheTag)
+      return cart
     })
     .catch(medusaError)
 }
@@ -415,6 +414,7 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
     const cartId = await getCartId()
     if (!cartId) throw new Error("No cart found")
 
+    const headers = await getAuthHeaders()
     const email = formData.get("email") as string
     const first_name = formData.get("first_name") as string
     const country_code = (formData.get("country_code") as string)?.toLowerCase()
@@ -423,10 +423,11 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
     const address_2 = formData.get("address_2") as string
     const postal_code = formData.get("postal_code") as string
     const phone = formData.get("phone") as string
+    const selected_payment_id = formData.get("payment_method") as string
 
     const address = {
       first_name,
-      last_name: first_name, // Using first_name as last_name for simplicity if not provided
+      last_name: first_name,
       address_1,
       address_2,
       city,
@@ -435,18 +436,24 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
       phone,
     }
 
-    const headers = {
-      ...(await getAuthHeaders()),
-    }
-
     const region = await getRegionForCountryCode(country_code)
 
     if (!region) {
       return `We do not ship to ${country_code?.toUpperCase() || "that country"}. Please choose a supported country.`
     }
 
+    // Start fetching payment providers early to parallelize with cart updates
+    const paymentProvidersPromise = sdk.client.fetch<HttpTypes.StorePaymentProviderListResponse>(
+      `/store/payment-providers`,
+      {
+        method: "GET",
+        query: { region_id: region.id },
+        headers,
+      }
+    ).catch(() => ({ payment_providers: [] }));
+
     // 1. Update Cart with Email, Address and Region
-    await updateCart({
+    let cart = await updateCart({
       email,
       shipping_address: address,
       billing_address: address,
@@ -455,29 +462,25 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
 
     // 2. Set Shipping Method
     const shippingOptionsRes = await listCartOptions()
+
     if (shippingOptionsRes.shipping_options?.length > 0) {
       const optionId = shippingOptionsRes.shipping_options[0].id
-      await setShippingMethod({ cartId, shippingMethodId: optionId })
+      cart = await setShippingMethod({ cartId, shippingMethodId: optionId })
     }
 
     // 3. Initiate Payment Session
-    const cart = await retrieveCart(cartId)
+    if (!cart) {
+      cart = await retrieveCart(cartId)
+    }
+
     if (!cart) throw new Error("Cart not found")
 
-    if (region) {
-      const { payment_providers } = await sdk.client.fetch<HttpTypes.StorePaymentProviderListResponse>(
-        `/store/payment-providers`,
-        {
-          method: "GET",
-          query: { region_id: region.id },
-          headers,
-        }
-      )
+    const { payment_providers } = await paymentProvidersPromise
 
-      if (payment_providers?.length > 0) {
-        const providerId = payment_providers[0].id
-        await sdk.store.payment.initiatePaymentSession(cart, { provider_id: providerId }, {}, headers)
-      }
+    if (payment_providers && payment_providers.length > 0) {
+      // Find provider matching user selection, or fallback to first
+      const provider = payment_providers.find(p => p.id === selected_payment_id) || payment_providers[0];
+      await sdk.store.payment.initiatePaymentSession(cart, { provider_id: provider.id }, {}, headers)
     }
 
     // 4. Place Order
@@ -486,7 +489,6 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
     if (e.message === "NEXT_REDIRECT") {
       throw e
     }
-    console.error("Checkout Action Error:", e)
     return e.message
   }
 }

@@ -59,7 +59,7 @@ export default function ProductCarousel({ title = "You may also like:", products
           <button
             onClick={() => scroll("left")}
             aria-label="Scroll left"
-            className="absolute -left-5 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#e5e5e5] shadow-sm flex items-center justify-center hover:bg-gray-50 transition"
+            className="absolute left-0 lg:-left-5 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#e5e5e5] shadow-sm flex items-center justify-center hover:bg-gray-50 transition"
           >
             <ChevronLeft size={16} strokeWidth={1.5} />
           </button>
@@ -69,7 +69,7 @@ export default function ProductCarousel({ title = "You may also like:", products
           <button
             onClick={() => scroll("right")}
             aria-label="Scroll right"
-            className="absolute -right-5 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#e5e5e5] shadow-sm flex items-center justify-center hover:bg-gray-50 transition"
+            className="absolute right-0 lg:-right-5 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#e5e5e5] shadow-sm flex items-center justify-center hover:bg-gray-50 transition"
           >
             <ChevronRight size={16} strokeWidth={1.5} />
           </button>

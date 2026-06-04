@@ -32,7 +32,7 @@ export default async function CategoryPage({
 
   return (
     <>
-      <div className="max-w-[1600px] mx-auto px-6 py-4 text-[15px] text-gray-400 flex items-center gap-2">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 text-[14px] sm:text-[15px] text-gray-400 flex items-center gap-2">
         <Link href="/shop" className="hover:text-[#c87a4c]">
           Category
         </Link>

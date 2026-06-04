@@ -14,7 +14,7 @@ export default async function ProductPage({
 
   const adapter = AdapterFactory.getAdapter();
 
-  console.log("Clicked Handle/ID:", id);
+
 
   // Fetch product and related products in parallel
   const [product, relatedResult] = await Promise.all([
@@ -22,7 +22,7 @@ export default async function ProductPage({
     adapter.listProducts({ limit: 4 }), // Just get some for now
   ]);
 
-  console.log("Product:", product);
+
 
   if (!product) {
     notFound();

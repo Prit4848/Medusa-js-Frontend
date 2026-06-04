@@ -32,21 +32,19 @@ export class MedusaAdapter implements ICommerceAdapter {
         medusaQuery["variants.inventory_quantity"] = { $gt: 0 };
       }
 
-      console.log("MedusaAdapter: listProducts fetching with query:", medusaQuery);
+  
 
       const { products, count } = await sdk.client.fetch<HttpTypes.StoreProductListResponse>(
         `/store/products`,
         { query: medusaQuery }
       );
 
-      console.log(`MedusaAdapter: listProducts fetched ${products.length} products`);
 
       return {
         products: products.map((p) => this.mapProduct(p)),
         count,
       };
     } catch (error) {
-      console.error("MedusaAdapter: listProducts error:", error);
       throw error;
     }
   }
@@ -126,7 +124,6 @@ export class MedusaAdapter implements ICommerceAdapter {
       );
       return products[0] ? this.mapProduct(products[0]) : null;
     } catch (error) {
-      console.error(`MedusaAdapter: getProductByHandle error for ${handle}:`, error);
       return null;
     }
   }

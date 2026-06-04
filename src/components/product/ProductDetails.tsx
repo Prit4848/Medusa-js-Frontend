@@ -35,7 +35,6 @@ export default function ProductDetails({
             const variantId = variant?.id;
 
             if (!variantId) {
-                console.error("No variant found");
                 toast.error("No variant found for this product");
                 return;
             }
@@ -65,7 +64,6 @@ export default function ProductDetails({
                 `${quantity} item(s) added to cart`
             );
         } catch (error) {
-            console.error("Add to cart failed:", error);
             toast.error(error instanceof Error ? error.message : "Unable to add item to cart");
         } finally {
             setIsAdding(false);

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 export const handleError = (error: any) => {
-  console.error("Commerce Middleware Error:", error);
 
   const status = error.status || 500;
   const message = error.message || "An unexpected error occurred in the commerce middleware";
