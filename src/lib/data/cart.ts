@@ -470,7 +470,8 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
 
     // 3. Initiate Payment Session
     if (!cart) {
-      cart = await retrieveCart(cartId)
+      const retrievedCart = await retrieveCart(cartId)
+      if (retrievedCart) cart = retrievedCart
     }
 
     if (!cart) throw new Error("Cart not found")
