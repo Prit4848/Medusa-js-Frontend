@@ -142,9 +142,11 @@ export default async function Navbar() {
         {/* RIGHT — ICONS */}
         <div className="flex-1 lg:w-1/4 flex items-center justify-end gap-4 lg:gap-10 text-black">
 
-          <button className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300">
+          <Link 
+            href="/search"
+            className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300">
             <Search size={22} strokeWidth={1.8} />
-          </button>
+          </Link>
 
            <Link
             href="/login"

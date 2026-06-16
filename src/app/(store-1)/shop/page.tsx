@@ -120,7 +120,10 @@ async function ShopContent({ searchParams }: { searchParams: any }) {
         limit={limit}
       />
     );
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === "AbortError" || error.code === 23 || error.name === "TimeoutError") {
+      throw error;
+    }
     console.error("Shop Error:", error);
     return <div>Error loading shop. Please try again later.</div>;
   }

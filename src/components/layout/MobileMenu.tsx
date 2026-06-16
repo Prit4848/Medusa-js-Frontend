@@ -116,12 +116,13 @@ export default function MobileMenu({ cartCount }: { cartCount: number }) {
           </nav>
 
           <div className="mt-10 pt-10 border-t border-gray-200 flex items-center gap-6">
-            <button
+            <Link
+              href="/search"
               className="text-black hover:text-[#c47c48] transition-colors"
               onClick={() => setIsOpen(false)}
             >
               <Search size={22} />
-            </button>
+            </Link>
             <Link
               href="/login"
               className="text-black hover:text-[#c47c48] transition-colors"

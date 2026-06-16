@@ -18,7 +18,7 @@ async function getFeaturedProducts(limit = 12): Promise<Product[]> {
       `/store/products`,
       {
         query: {
-          fields: "*variants.calculated_price,+variants.inventory_quantity,*categories,*collection",
+          fields: "id,title,handle,thumbnail,variants.id,variants.title,variants.sku,variants.calculated_price,variants.inventory_quantity,variants.manage_inventory,categories.name,categories.handle,collection.title",
           region_id,
           limit,
         },

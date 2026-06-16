@@ -13,6 +13,22 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 }
 
+// Global log suppressor for specific expected errors
+if (typeof window === "undefined") {
+  const originalError = console.error;
+  console.error = (...args: any[]) => {
+    const msg = args[0]?.toString() || "";
+    if (
+      msg.includes("TimeoutError") || 
+      msg.includes("aborted due to timeout") ||
+      (args[0]?.code === 23)
+    ) {
+      return;
+    }
+    originalError(...args);
+  };
+}
+
 export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
   return (

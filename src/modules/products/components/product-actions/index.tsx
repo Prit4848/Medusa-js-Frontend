@@ -133,6 +133,10 @@ export default function ProductActions({
     })
 
     if (!result.success) {
+      if (result.error?.includes("aborted") || result.error?.includes("timeout")) {
+        setIsAdding(false)
+        return
+      }
       console.error("Add to cart failed:", result.error)
     }
 

@@ -203,9 +203,11 @@ export async function updateLineItem({
       revalidateTag(fulfillmentCacheTag)
     })
     .catch((err) => {
-  console.dir(err, { depth: null })
-  throw err
-})
+      if (err.name === "AbortError" || err.code === 23 || err.name === "TimeoutError") {
+        throw err
+      }
+      throw err
+    })
 }
 
 export async function deleteLineItem(lineId: string) {
@@ -233,10 +235,11 @@ export async function deleteLineItem(lineId: string) {
       revalidateTag(fulfillmentCacheTag)
     })
     .catch((err) => {
-
-  console.dir(err, { depth: null })
-  throw err
-})
+      if (err.name === "AbortError" || err.code === 23 || err.name === "TimeoutError") {
+        throw err
+      }
+      throw err
+    })
 }
 
 export async function setShippingMethod({

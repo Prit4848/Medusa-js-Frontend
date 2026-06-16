@@ -1,7 +1,6 @@
 import { getLocaleHeader } from "@lib/util/get-locale-header"
 import Medusa, { FetchArgs, FetchInput } from "@medusajs/js-sdk"
 
-// Defaults to standard port for Medusa server
 let MEDUSA_BACKEND_URL = "http://localhost:9000"
 
 if (process.env.MEDUSA_BACKEND_URL) {
@@ -22,7 +21,7 @@ sdk.client.fetch = async <T>(
 ): Promise<T> => {
   const headers = (init?.headers as Record<string, string>) ?? {}
   let localeHeader: Record<string, string> = {}
-  
+
   try {
     const lh = await getLocaleHeader()
     if (lh["x-medusa-locale"]) {
@@ -30,35 +29,30 @@ sdk.client.fetch = async <T>(
     }
   } catch {}
 
-  const newHeaders = {
-    ...localeHeader,
-    ...headers,
-  }
-  
   init = {
     ...init,
-    headers: newHeaders,
-  }
-  
-  let parsedBody: any
-  try {
-    if (init.body && typeof init.body === "string") {
-      parsedBody = JSON.parse(init.body)
-    } else {
-      parsedBody = init.body
-    }
-  } catch {
-    parsedBody = init.body
+    headers: {
+      ...localeHeader,
+      ...headers,
+    },
+    // ↓ This is the fix — stops Next.js from trying to cache Medusa responses
+    next: {
+      ...((init as any)?.next ?? {}),
+      cache: "no-store",
+    },
   }
 
   try {
-    const response = await originalFetch(input, init);
-    return response as T;
+    const response = await originalFetch(input, init)
+    return response as T
   } catch (error: any) {
+    if (error.name === "AbortError" || error.code === 23 || error.name === "TimeoutError") {
+      throw error
+    }
+
     let errorData = error.response?.data
-    
-    // If it's a fetch error and we can get more info
-    if (error.response && typeof error.response.text === 'function') {
+
+    if (error.response && typeof error.response.text === "function") {
       try {
         const text = await error.response.clone().text()
         try {
@@ -69,8 +63,6 @@ sdk.client.fetch = async <T>(
       } catch {}
     }
 
-    throw error;
+    throw error
   }
-
-
 }

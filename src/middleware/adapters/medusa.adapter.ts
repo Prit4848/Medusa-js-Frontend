@@ -19,8 +19,8 @@ export class MedusaAdapter implements ICommerceAdapter {
       } = query || {};
 
       const medusaQuery: any = {
-        fields: "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,*categories,*collection",
         ...restQuery,
+        fields: "id,title,handle,thumbnail,variants.id,variants.title,variants.sku,variants.calculated_price,variants.inventory_quantity,variants.manage_inventory,categories.name,categories.handle,collection.title",
         region_id,
       };
 
@@ -44,7 +44,10 @@ export class MedusaAdapter implements ICommerceAdapter {
         products: products.map((p) => this.mapProduct(p as any)),
         count,
       };
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.code === 23 || error.name === "TimeoutError") {
+        throw error;
+      }
       console.error("MedusaAdapter listProducts Error:", error);
       throw error;
     }
@@ -98,7 +101,7 @@ export class MedusaAdapter implements ICommerceAdapter {
         `/store/products/${id}`,
         {
           query: {
-            fields: "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,*categories,*collection",
+            fields: "id,title,handle,description,thumbnail,images.url,variants.id,variants.title,variants.sku,variants.calculated_price,variants.inventory_quantity,variants.manage_inventory,variants.options,options.id,options.title,options.values,categories.id,categories.name,categories.handle,collection.id,collection.title",
             region_id,
           },
         }
@@ -117,7 +120,7 @@ export class MedusaAdapter implements ICommerceAdapter {
         {
           query: {
             handle,
-            fields: "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,*categories,*collection",
+            fields: "id,title,handle,description,thumbnail,images.url,variants.id,variants.title,variants.sku,variants.calculated_price,variants.inventory_quantity,variants.manage_inventory,variants.options,options.id,options.title,options.values,categories.id,categories.name,categories.handle,collection.id,collection.title",
             region_id,
             limit: 1,
           },
