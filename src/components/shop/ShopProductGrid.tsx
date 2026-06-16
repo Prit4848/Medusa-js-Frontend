@@ -101,11 +101,12 @@ export default function ShopProductGrid({
           <div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-[35px] gap-y-10 lg:gap-y-[40px]"
           >
-            {products.map((product) => (
+            {products.map((product, index) => (
               <div key={product.id} className="w-full">
                 <ShopProductCard
                   product={product}
                   price={getPrice(product)}
+                  priority={index < 3}
                 />
               </div>
             ))}

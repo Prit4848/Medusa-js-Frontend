@@ -18,9 +18,10 @@ const DEFAULT_COUNTRY_CODE = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us";
 interface ShopProductCardProps {
   product: Product;
   price: number;
+  priority?: boolean;
 }
 
-export default function ShopProductCard({ product, price }: ShopProductCardProps) {
+export default function ShopProductCard({ product, price, priority }: ShopProductCardProps) {
   const [showQuickView, setShowQuickView] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const { isWishlisted, addItem, removeItem } = useWishlist();
@@ -103,7 +104,8 @@ export default function ShopProductCard({ product, price }: ShopProductCardProps
               src={thumbnail}
               alt={product.title}
               fill
-              sizes="(max-width: 768px) 100vw, 33vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={priority}
               className="object-contain transition-transform duration-[350ms] ease-in-out group-hover:scale-[1.03]"
             />
 
