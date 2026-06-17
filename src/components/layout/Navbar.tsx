@@ -66,7 +66,7 @@ export default async function Navbar() {
                 {[
                   { label: 'About Us', href: '/' },
                   { label: 'About Team', href: '/' },
-                  { label: 'Contact Us', href: '/' },
+                  { label: 'Contact Us', href: '/contact' },
                   { label: 'FAQ', href: '/' },
                   { label: '404', href: '/' },
                   { label: 'Wishlist', href: '/wishlist' },
@@ -107,33 +107,6 @@ export default async function Navbar() {
                 <Link href="/account" className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300">
                   Account
                 </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* BLOG */}
-          <div className="relative group">
-            <button className="flex items-center gap-1 text-[16px] font-light text-[#3f4654] hover:text-[#c47c48] transition-colors duration-300">
-              <span className="relative flex items-center gap-2">
-                <span className="relative w-5 h-[2px] overflow-hidden">
-                  <span className="absolute left-0 top-0 h-full w-full bg-[#c47c48] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </span>
-                Blog
-              </span>
-              <ChevronDown size={16} strokeWidth={2} className="mt-[2px]" />
-            </button>
-
-            <div className="absolute left-1/2 -translate-x-1/2 top-[58px] w-[300px] bg-[#f5f5f5] shadow-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-              <div className="py-5">
-                {['Blog', 'Blog Article'].map((item) => (
-                  <Link
-                    key={item}
-                    href="/"
-                    className="block px-8 py-5 text-[15px] font-light text-[#4b5563] hover:text-[#c47c48] transition-colors duration-300"
-                  >
-                    {item}
-                  </Link>
-                ))}
               </div>
             </div>
           </div>
