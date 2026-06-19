@@ -18,22 +18,17 @@ import {
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
     const authHeaders = await getAuthHeaders()
-
     if (!authHeaders) return null
 
-    const headers = {
-      ...authHeaders,
-    }
-
-    const next = {
-      ...(await getCacheOptions("customers")),
-    }
+    const headers = { ...authHeaders }
+    const next = { ...(await getCacheOptions("customers")) }
 
     return await sdk.client
       .fetch<{ customer: HttpTypes.StoreCustomer }>(`/store/customers/me`, {
         method: "GET",
         query: {
-          fields: "*orders",
+          fields:
+            "*orders,*orders.items,*orders.summary,*orders.shipping_address,*addresses",
         },
         headers,
         next,
@@ -43,10 +38,29 @@ export const retrieveCustomer =
       .catch(() => null)
   }
 
-export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
-  const headers = {
-    ...(await getAuthHeaders()),
+export const retrieveCustomerFresh =
+  async (): Promise<HttpTypes.StoreCustomer | null> => {
+    const authHeaders = await getAuthHeaders()
+    if (!authHeaders) return null
+
+    const headers = { ...authHeaders }
+
+    return await sdk.client
+      .fetch<{ customer: HttpTypes.StoreCustomer }>(`/store/customers/me`, {
+        method: "GET",
+        query: {
+          fields:
+            "*orders,*orders.items,*orders.summary,*orders.shipping_address,*addresses",
+        },
+        headers,
+        cache: "no-store",
+      })
+      .then(({ customer }) => customer)
+      .catch(() => null)
   }
+
+export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
+  const headers = { ...(await getAuthHeaders()) }
 
   const updateRes = await sdk.store.customer
     .update(body, {}, headers)
@@ -76,9 +90,7 @@ export async function signup(_currentState: unknown, formData: FormData) {
 
     await setAuthToken(token as string)
 
-    const headers = {
-      ...(await getAuthHeaders()),
-    }
+    const headers = { ...(await getAuthHeaders()) }
 
     const { customer: createdCustomer } = await sdk.store.customer.create(
       customerForm,
@@ -127,9 +139,8 @@ export async function login(_currentState: unknown, formData: FormData) {
   }
 }
 
-export async function signout(countryCode: string) {
+export async function signout(countryCode?: string) {
   await sdk.auth.logout()
-
   await removeAuthToken()
 
   const customerCacheTag = await getCacheTag("customers")
@@ -140,18 +151,15 @@ export async function signout(countryCode: string) {
   const cartCacheTag = await getCacheTag("carts")
   revalidateTag(cartCacheTag)
 
-  redirect(`/${countryCode}/account`)
+  const redirectPath = countryCode ? `/${countryCode}/account` : "/login"
+  redirect(redirectPath)
 }
 
 export async function transferCart() {
   const cartId = await getCartId()
-
-  if (!cartId) {
-    return
-  }
+  if (!cartId) return
 
   const headers = await getAuthHeaders()
-
   await sdk.store.cart.transferCart(cartId, {}, headers)
 
   const cartCacheTag = await getCacheTag("carts")
@@ -162,8 +170,14 @@ export const addCustomerAddress = async (
   currentState: Record<string, unknown>,
   formData: FormData
 ): Promise<any> => {
-  const isDefaultBilling = (currentState.isDefaultBilling as boolean) || false
-  const isDefaultShipping = (currentState.isDefaultShipping as boolean) || false
+  const isDefaultBilling =
+    formData.get("is_default_billing") === "on" ||
+    (currentState.isDefaultBilling as boolean) ||
+    false
+  const isDefaultShipping =
+    formData.get("is_default_shipping") === "on" ||
+    (currentState.isDefaultShipping as boolean) ||
+    false
 
   const address = {
     first_name: formData.get("first_name") as string,
@@ -180,9 +194,7 @@ export const addCustomerAddress = async (
     is_default_shipping: isDefaultShipping,
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = { ...(await getAuthHeaders()) }
 
   return sdk.store.customer
     .createAddress(address, {}, headers)
@@ -199,9 +211,7 @@ export const addCustomerAddress = async (
 export const deleteCustomerAddress = async (
   addressId: string
 ): Promise<void> => {
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = { ...(await getAuthHeaders()) }
 
   await sdk.store.customer
     .deleteAddress(addressId, headers)
@@ -226,6 +236,9 @@ export const updateCustomerAddress = async (
     return { success: false, error: "Address ID is required" }
   }
 
+  const isDefaultBilling = formData.get("is_default_billing") === "on"
+  const isDefaultShipping = formData.get("is_default_shipping") === "on"
+
   const address = {
     first_name: formData.get("first_name") as string,
     last_name: formData.get("last_name") as string,
@@ -236,17 +249,14 @@ export const updateCustomerAddress = async (
     postal_code: formData.get("postal_code") as string,
     province: formData.get("province") as string,
     country_code: formData.get("country_code") as string,
+    is_default_billing: isDefaultBilling,
+    is_default_shipping: isDefaultShipping,
   } as HttpTypes.StoreUpdateCustomerAddress
 
   const phone = formData.get("phone") as string
+  if (phone) address.phone = phone
 
-  if (phone) {
-    address.phone = phone
-  }
-
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = { ...(await getAuthHeaders()) }
 
   return sdk.store.customer
     .updateAddress(addressId, address, {}, headers)
@@ -258,4 +268,18 @@ export const updateCustomerAddress = async (
     .catch((err) => {
       return { success: false, error: err.toString() }
     })
+}
+
+export const setCustomerDefaultAddress = async (
+  addressId: string
+): Promise<void> => {
+  const headers = { ...(await getAuthHeaders()) }
+
+  await sdk.store.customer
+    .updateAddress(addressId, { is_default_shipping: true }, {}, headers)
+    .then(async () => {
+      const customerCacheTag = await getCacheTag("customers")
+      revalidateTag(customerCacheTag)
+    })
+    .catch(medusaError)
 }

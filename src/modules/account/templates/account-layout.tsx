@@ -1,39 +1,57 @@
 import React from "react"
-
-import UnderlineLink from "@modules/common/components/interactive-link"
-
-import AccountNav from "../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
+import AccountNav from "../components/account-nav"
+import Link from "next/link"
 
 interface AccountLayoutProps {
   customer: HttpTypes.StoreCustomer | null
   children: React.ReactNode
 }
 
-const AccountLayout: React.FC<AccountLayoutProps> = ({
-  customer,
-  children,
-}) => {
+const AccountLayout: React.FC<AccountLayoutProps> = ({ customer, children }) => {
   return (
-    <div className="flex-1 small:py-12" data-testid="account-page">
-      <div className="flex-1 content-container h-full max-w-5xl mx-auto bg-white flex flex-col">
-        <div className="grid grid-cols-1  small:grid-cols-[240px_1fr] py-12">
-          <div>{customer && <AccountNav customer={customer} />}</div>
-          <div className="flex-1">{children}</div>
+    <div className="bg-gray-50 min-h-screen py-10">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="grid grid-cols-[220px_1fr] gap-6 items-start">
+
+          {/* Sidebar */}
+          <div className="bg-white border border-gray-100 rounded-xl p-4 sticky top-24">
+            {/* Avatar + name */}
+            {customer && (
+              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0"
+                  style={{ background: "#FAECE7", color: "#993C1D" }}
+                >
+                  {customer.first_name?.[0]}{customer.last_name?.[0]}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {customer.first_name} {customer.last_name}
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">{customer.email}</p>
+                </div>
+              </div>
+            )}
+
+            {customer && <AccountNav customer={customer} />}
+          </div>
+
+          {/* Main content */}
+          <div>{children}</div>
         </div>
-        <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
+
+        {/* Footer strip */}
+        <div className="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
-            </span>
+            <p className="text-sm font-medium text-gray-900">Got questions?</p>
           </div>
-          <div>
-            <UnderlineLink href="/customer-service">
-              Customer Service
-            </UnderlineLink>
-          </div>
+          <Link
+            href="/contact"
+            className="text-sm text-[#c97a4a] hover:underline"
+          >
+            Contact Us →
+          </Link>
         </div>
       </div>
     </div>

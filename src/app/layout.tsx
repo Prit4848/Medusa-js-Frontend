@@ -3,6 +3,8 @@ import { Metadata } from "next"
 import "styles/globals.css";
 import { Montserrat } from "next/font/google";
 import Toaster from '@/components/layout/Toaster';
+import { AuthProvider } from "@/lib/auth/AuthContext"
+import { getCustomer } from "@/lib/auth/getCustomer"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -29,14 +31,17 @@ if (typeof window === "undefined") {
   };
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
+  const customer = await getCustomer()
+
   return (
     <html lang="en">
       <body className={montserrat.className}>
-
-        <main>{children}</main>
-        <Toaster />
+        <AuthProvider initialCustomer={customer}>
+          <main>{children}</main>
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   )

@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FiHeart, FiSearch, FiShoppingCart } from 'react-icons/fi';
 import { Product } from '@/middleware/types/commerce.types';
 import QuickViewModal from './QuickViewModal';
 import { addToCart } from "@/lib/data/cart";
-import { useWishlist } from '@/lib/wishlist';
+import { useWishlist } from '@/lib/hooks/wishlist';
 import toast from "react-hot-toast";
 import { convertToLocale } from "@lib/util/money";
 
@@ -24,31 +25,61 @@ interface ShopProductCardProps {
 export default function ShopProductCard({ product, price, priority }: ShopProductCardProps) {
   const [showQuickView, setShowQuickView] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const { isWishlisted, addItem, removeItem } = useWishlist();
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const router = useRouter();
+
+  const {
+    isWishlisted,
+    addItem,
+    removeItem,
+    getWishlistItemId,
+    isLoggedIn,
+  } = useWishlist();
 
   const wishlisted = isWishlisted(product.id);
   const thumbnail = product.thumbnail || PLACEHOLDER;
   const currencyCode = product.price?.currency_code ?? product.variants?.[0]?.currency_code ?? "USD";
   const formattedPrice = convertToLocale({ amount: price, currency_code: currencyCode });
 
-  const handleWishlist = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleWishlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (wishlisted) {
-      removeItem(product.id);
-      toast.success('Removed from wishlist');
-    } else {
-      addItem({
-        id: product.id,
-        handle: product.handle,
-        title: product.title,
-        category: product.category ?? '',
-        thumbnail: product.thumbnail ?? '',
-        price,
-        variantId: product.variants?.[0]?.id ?? '',
-        inStock: (product.variants?.[0]?.inventory_quantity ?? 0) > 0,
-      });
-      toast.success('Added to wishlist');
+
+    if (!isLoggedIn) {
+      toast('Please log in to save items to your wishlist', { icon: '🔒' });
+      router.push('/login?redirectTo=/wishlist');
+      return;
+    }
+
+    setWishlistLoading(true);
+
+    try {
+      if (wishlisted) {
+        const itemId = getWishlistItemId(product.id);
+        if (itemId) {
+          await removeItem(itemId);
+          toast.success('Removed from wishlist');
+        }
+      } else {
+        const success = await addItem({
+          product_id: product.id,
+          variant_id: product.variants?.[0]?.id ?? '',
+          handle: product.handle ?? '',
+          title: product.title,
+          category: product.category ?? '',
+          thumbnail: product.thumbnail ?? '',
+          price,
+          in_stock: (product.variants?.[0]?.inventory_quantity ?? 0) > 0,
+        });
+
+        if (success) {
+          toast.success('Added to wishlist');
+        } else {
+          toast.error('Failed to add to wishlist');
+        }
+      }
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
@@ -118,7 +149,7 @@ export default function ShopProductCard({ product, price, priority }: ShopProduc
               transition-all duration-300 ease-in-out
               lg:group-hover:opacity-100 lg:group-hover:right-3
             ">
-              {/* Heart — now wired to wishlist */}
+              {/* Heart */}
               <button
                 className="
                   w-8 h-8 rounded-full border-none bg-white
@@ -128,13 +159,20 @@ export default function ShopProductCard({ product, price, priority }: ShopProduc
                   transition-all duration-200
                   hover:bg-[#c97a4a] hover:text-white
                   cursor-pointer
+                  disabled:opacity-50
                 "
                 style={{ color: wishlisted ? '#c97a4a' : '#222' }}
                 onClick={handleWishlist}
+                disabled={wishlistLoading}
               >
-                <FiHeart style={{ fill: wishlisted ? '#c97a4a' : 'none' }} />
+                {wishlistLoading ? (
+                  <div className="w-3 h-3 border-2 border-[#c97a4a] border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <FiHeart style={{ fill: wishlisted ? '#c97a4a' : 'none' }} />
+                )}
               </button>
 
+              {/* Quick view */}
               <button
                 className="
                   w-8 h-8 rounded-full border-none bg-white
@@ -154,6 +192,7 @@ export default function ShopProductCard({ product, price, priority }: ShopProduc
                 <FiSearch />
               </button>
 
+              {/* Add to cart */}
               <button
                 className="
                   w-8 h-8 rounded-full border-none bg-white

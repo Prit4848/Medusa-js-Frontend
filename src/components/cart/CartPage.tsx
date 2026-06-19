@@ -5,6 +5,7 @@ import { X, Loader2 } from "lucide-react";
 import { updateLineItem, deleteLineItem } from "@lib/data/cart";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth/AuthContext"
 
 interface CartPageProps {
   cart: any;
@@ -13,6 +14,14 @@ interface CartPageProps {
 export default function CartPage({ cart }: CartPageProps) {
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState<{ id: string, type: 'update' | 'delete' } | null>(null);
+  const { customer } = useAuth();
+  const handleCheckout = () => {
+    if (!customer) {
+      router.push("/login?redirectTo=/billing")
+    } else {
+      router.push("/billing")
+    }
+  }
 
   // Handle null cart safely
   if (!cart) {
@@ -36,12 +45,12 @@ export default function CartPage({ cart }: CartPageProps) {
       lineId: item.id,
       name: item.product_title || item.title || "Product",
       category: item.variant_title || "",
-      price: (item.unit_price || 0) ,
+      price: (item.unit_price || 0),
       quantity: item.quantity,
       image: item.thumbnail || "/placeholder-product.jpg",
     })) || [];
 
-  const subtotal = (cart.subtotal || 0) ;
+  const subtotal = (cart.subtotal || 0);
 
   const increaseQuantity = async (
     lineId: string,
@@ -161,50 +170,50 @@ export default function CartPage({ cart }: CartPageProps) {
                 </div>
 
                 <div className="flex items-center justify-between lg:contents">
-                    {/* Quantity - on mobile shows label */}
-                    <div className="flex items-center gap-4 lg:gap-6">
-                      <span className="lg:hidden text-[14px] font-semibold text-[#3a4651]">QTY:</span>
-                      <button
-                        disabled={loadingAction?.id === item.lineId}
-                        onClick={() =>
-                          decreaseQuantity(
-                            item.lineId,
-                            item.quantity
-                          )
-                        }
-                        className="text-[22px] lg:text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
-                      >
-                        -
-                      </button>
+                  {/* Quantity - on mobile shows label */}
+                  <div className="flex items-center gap-4 lg:gap-6">
+                    <span className="lg:hidden text-[14px] font-semibold text-[#3a4651]">QTY:</span>
+                    <button
+                      disabled={loadingAction?.id === item.lineId}
+                      onClick={() =>
+                        decreaseQuantity(
+                          item.lineId,
+                          item.quantity
+                        )
+                      }
+                      className="text-[22px] lg:text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
+                    >
+                      -
+                    </button>
 
-                      <div className="min-w-[30px] lg:min-w-[40px] flex justify-center">
-                        {loadingAction?.id === item.lineId && loadingAction?.type === 'update' ? (
-                          <Loader2 className="animate-spin text-[#c97a4a]" size={18} />
-                        ) : (
-                          <span className="text-[16px] lg:text-[18px] font-semibold text-center">
-                            {item.quantity}
-                          </span>
-                        )}
-                      </div>
-
-                      <button
-                        disabled={loadingAction?.id === item.lineId}
-                        onClick={() =>
-                          increaseQuantity(
-                            item.lineId,
-                            item.quantity
-                          )
-                        }
-                        className="text-[22px] lg:text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
-                      >
-                        +
-                      </button>
+                    <div className="min-w-[30px] lg:min-w-[40px] flex justify-center">
+                      {loadingAction?.id === item.lineId && loadingAction?.type === 'update' ? (
+                        <Loader2 className="animate-spin text-[#c97a4a]" size={18} />
+                      ) : (
+                        <span className="text-[16px] lg:text-[18px] font-semibold text-center">
+                          {item.quantity}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Price */}
-                    <div className="text-[18px] lg:text-[22px] font-bold text-[#222]">
-                      ${Number(item.price*item.quantity).toFixed(2)}
-                    </div>
+                    <button
+                      disabled={loadingAction?.id === item.lineId}
+                      onClick={() =>
+                        increaseQuantity(
+                          item.lineId,
+                          item.quantity
+                        )
+                      }
+                      className="text-[22px] lg:text-[26px] text-[#444] hover:text-[#c97a4a] disabled:opacity-50"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Price */}
+                  <div className="text-[18px] lg:text-[22px] font-bold text-[#222]">
+                    ${Number(item.price * item.quantity).toFixed(2)}
+                  </div>
                 </div>
 
                 {/* Remove - absolutely positioned on mobile for better UI */}
@@ -278,7 +287,7 @@ export default function CartPage({ cart }: CartPageProps) {
             </div>
 
             <button
-              onClick={() => router.push("/billing")}
+              onClick={handleCheckout}
               className="w-full h-[62px] bg-[#c97a4a] text-white text-[17px] font-bold hover:opacity-90 transition"
             >
               CHECK OUT

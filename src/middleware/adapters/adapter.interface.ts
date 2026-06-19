@@ -25,7 +25,13 @@ export interface ICommerceAdapter {
   listOrders(customerId: string): Promise<Order[]>;
   getOrder(id: string): Promise<Order | null>;
 
-  // Auth/Customer
-  getCustomer(id: string): Promise<Customer | null>;
-  // ... more methods as needed
+
+  loginCustomer(email: string, password: string): Promise<{ token: string }>
+  registerCustomer(data: {
+  email: string
+  password: string
+  first_name: string
+  last_name: string
+}): Promise<{ token: string; customer: Customer }>
+getCustomerWithToken(token?: string): Promise<Customer | null>
 }

@@ -8,14 +8,16 @@ import {
 } from 'lucide-react';
 import { retrieveCart } from "@lib/data/cart";
 import MobileMenu from './MobileMenu';
+import { getCustomer } from '@/lib/auth/getCustomer';
+import NavbarAuthButton from './NavbarAuthButton';
 
 export default async function Navbar() {
   const cart = await retrieveCart();
+  const customer = await getCustomer();
 
   const cartCount =
     cart?.items?.reduce(
-      (acc: number, item: any) =>
-        acc + item.quantity,
+      (acc: number, item: any) => acc + item.quantity,
       0
     ) || 0;
 
@@ -70,7 +72,10 @@ export default async function Navbar() {
                   { label: 'FAQ', href: '/' },
                   { label: '404', href: '/' },
                   { label: 'Wishlist', href: '/wishlist' },
-                  { label: 'Login', href: '/' },
+                  // Conditionally show Login or Account
+                  customer
+                    ? { label: 'Account', href: '/account' }
+                    : { label: 'Login', href: '/login' },
                 ].map((item) => (
                   <Link
                     key={item.label}
@@ -115,17 +120,14 @@ export default async function Navbar() {
         {/* RIGHT — ICONS */}
         <div className="flex-1 lg:w-1/4 flex items-center justify-end gap-4 lg:gap-10 text-black">
 
-          <Link 
+          <Link
             href="/search"
             className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300">
             <Search size={22} strokeWidth={1.8} />
           </Link>
 
-           <Link
-            href="/login"
-            className="hidden sm:block hover:text-[#c47c48] transition-colors duration-300">
-            <User size={22} strokeWidth={1.8} />
-          </Link>
+          {/* Auth button — client component handles logout */}
+          <NavbarAuthButton customer={customer} />
 
           <Link
             href="/wishlist"
@@ -146,6 +148,7 @@ export default async function Navbar() {
             )}
           </Link>
         </div>
+
       </div>
     </header>
   );

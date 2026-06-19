@@ -15,15 +15,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default async function StoreLayout(props: { children: React.ReactNode }) {
   const { children } = props
+
   return (
     <div className={montserrat.className}>
       <Navbar />
-
       <main>{children}</main>
       <Toaster />
       <Footer />
-    </div >
+    </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState, useActionState } from "react"
-import { PencilSquare as Edit, Trash } from "@medusajs/icons"
+import { PencilSquare as Edit, Trash, CheckCircleSolid } from "@medusajs/icons"
 import { Button, Heading, Text, clx } from "@medusajs/ui"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
@@ -14,6 +14,7 @@ import { HttpTypes } from "@medusajs/types"
 import {
   deleteCustomerAddress,
   updateCustomerAddress,
+  setCustomerDefaultAddress,
 } from "@lib/data/customer"
 
 type EditAddressProps = {
@@ -28,6 +29,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
   isActive = false,
 }) => {
   const [removing, setRemoving] = useState(false)
+  const [settingDefault, setSettingDefault] = useState(false)
   const [successState, setSuccessState] = useState(false)
   const { state, open, close: closeModal } = useToggleState(false)
 
@@ -61,24 +63,35 @@ const EditAddress: React.FC<EditAddressProps> = ({
     setRemoving(false)
   }
 
+  const handleSetDefault = async () => {
+    setSettingDefault(true)
+    await setCustomerDefaultAddress(address.id)
+    setSettingDefault(false)
+  }
+
   return (
     <>
       <div
         className={clx(
           "border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors",
           {
-            "border-gray-900": isActive,
+            "border-gray-900": isActive || address.is_default_shipping,
           }
         )}
         data-testid="address-container"
       >
         <div className="flex flex-col">
-          <Heading
-            className="text-left text-base-semi"
-            data-testid="address-name"
-          >
-            {address.first_name} {address.last_name}
-          </Heading>
+          <div className="flex items-start justify-between">
+            <Heading
+              className="text-left text-base-semi"
+              data-testid="address-name"
+            >
+              {address.first_name} {address.last_name}
+            </Heading>
+            {address.is_default_shipping && (
+              <CheckCircleSolid className="text-ui-fg-interactive" />
+            )}
+          </div>
           {address.company && (
             <Text
               className="txt-compact-small text-ui-fg-base"
@@ -100,24 +113,44 @@ const EditAddress: React.FC<EditAddressProps> = ({
               {address.country_code?.toUpperCase()}
             </span>
           </Text>
+          {address.is_default_shipping && (
+            <div className="mt-2">
+              <span className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full font-medium">
+                Default Shipping
+              </span>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-x-4">
-          <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
-            onClick={open}
-            data-testid="address-edit-button"
-          >
-            <Edit />
-            Edit
-          </button>
-          <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
-            onClick={removeAddress}
-            data-testid="address-delete-button"
-          >
-            {removing ? <Spinner /> : <Trash />}
-            Remove
-          </button>
+        <div className="flex flex-col gap-y-3 mt-4">
+          {!address.is_default_shipping && (
+            <button
+              className="text-small-regular text-ui-fg-interactive flex items-center gap-x-2 hover:underline"
+              onClick={handleSetDefault}
+              disabled={settingDefault}
+            >
+              {settingDefault ? <Spinner /> : null}
+              Set as default
+            </button>
+          )}
+          <div className="flex items-center gap-x-4">
+            <button
+              className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+              onClick={open}
+              data-testid="address-edit-button"
+            >
+              <Edit />
+              Edit
+            </button>
+            <button
+              className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+              onClick={removeAddress}
+              disabled={removing}
+              data-testid="address-delete-button"
+            >
+              {removing ? <Spinner /> : <Trash />}
+              Remove
+            </button>
+          </div>
         </div>
       </div>
 
@@ -209,6 +242,21 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 defaultValue={address.phone || undefined}
                 data-testid="phone-input"
               />
+              <div className="flex items-center gap-x-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="is_default_shipping"
+                  name="is_default_shipping"
+                  className="w-4 h-4"
+                  defaultChecked={address.is_default_shipping}
+                />
+                <label
+                  htmlFor="is_default_shipping"
+                  className="text-sm text-ui-fg-subtle cursor-pointer"
+                >
+                  Set as default shipping address
+                </label>
+              </div>
             </div>
             {formState.error && (
               <div className="text-rose-500 text-small-regular py-2">

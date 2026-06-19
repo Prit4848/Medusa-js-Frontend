@@ -49,12 +49,13 @@ const AddAddress = ({
   return (
     <>
       <button
-        className="border border-ui-border-base rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between"
         onClick={open}
         data-testid="add-address-button"
+        className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-lg transition hover:opacity-90"
+        style={{ background: "#c97a4a" }}
       >
-        <span className="text-base-semi">New address</span>
         <Plus />
+        Add new address
       </button>
 
       <Modal isOpen={state} close={close} data-testid="add-address-modal">
@@ -134,6 +135,20 @@ const AddAddress = ({
                 autoComplete="phone"
                 data-testid="phone-input"
               />
+              <div className="flex items-center gap-x-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="is_default_shipping"
+                  name="is_default_shipping"
+                  className="w-4 h-4"
+                />
+                <label
+                  htmlFor="is_default_shipping"
+                  className="text-sm text-ui-fg-subtle cursor-pointer"
+                >
+                  Set as default shipping address
+                </label>
+              </div>
             </div>
             {formState.error && (
               <div

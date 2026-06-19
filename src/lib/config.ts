@@ -35,11 +35,8 @@ sdk.client.fetch = async <T>(
       ...localeHeader,
       ...headers,
     },
-    // ↓ This is the fix — stops Next.js from trying to cache Medusa responses
-    next: {
-      ...((init as any)?.next ?? {}),
-      cache: "no-store",
-    },
+    // ↓ This ensures Next.js doesn't cache Medusa responses by default
+    cache: "no-store",
   }
 
   try {

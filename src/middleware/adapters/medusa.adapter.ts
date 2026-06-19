@@ -200,15 +200,81 @@ export class MedusaAdapter implements ICommerceAdapter {
     }
   }
 
-  async getCustomer(id: string): Promise<Customer | null> {
-    try {
-      const { customer } = await sdk.client.fetch<HttpTypes.StoreCustomerResponse>(`/store/customers/me`);
-      return this.mapCustomer(customer);
-    } catch {
-      return null;
-    }
-  }
+  async loginCustomer(email: string, password: string) {
+  try {
+    const token = await sdk.auth.login("customer", "emailpass", {
+      email,
+      password,
+    })
 
+    console.log("LOGIN TOKEN:", token)
+
+    return { token: token as string }
+  } catch (err) {
+    console.error("LOGIN ERROR:", err)
+    throw err
+  }
+}
+
+async registerCustomer(data: {
+  email: string
+  password: string
+  first_name: string
+  last_name: string
+}): Promise<{ token: string; customer: Customer }> {
+  try{
+  const token = await sdk.auth.register("customer", "emailpass", {
+    email: data.email,
+    password: data.password,
+  })
+  console.log("REGISTER TOKEN:", token)
+  const { customer } = await sdk.client.fetch<HttpTypes.StoreCustomerResponse>(
+    `/store/customers`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: {
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+      },
+    }
+  )
+
+return { token: token as string, customer: this.mapCustomer(customer) }}
+catch (err) {
+    console.error("REGISTER ERROR:", err)
+    throw err
+  }
+}
+
+async getCustomer(id: string): Promise<Customer | null> {
+  return this.getCustomerWithToken()
+}
+
+async getCustomerWithToken(token?: string) {
+  try {
+    console.log("TOKEN USED:", token)
+
+    const headers: Record<string, string> = {}
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`
+    }
+
+    const response = await sdk.client.fetch(
+      "/store/customers/me",
+      { headers }
+    )
+
+    console.log("CUSTOMER RESPONSE:", response)
+
+    return this.mapCustomer(response.customer)
+  } catch (err) {
+    console.error("CUSTOMER FETCH ERROR:", err)
+    return null
+  }
+}
   private mapProduct(p: HttpTypes.StoreProduct): Product {
   return {
     id: p.id,
