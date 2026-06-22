@@ -5,6 +5,13 @@ import { signout } from "@lib/data/customer"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { clx } from "@medusajs/ui"
+import {
+  IconLayoutDashboard,
+  IconUser,
+  IconHeart,
+  IconShoppingBag,
+  IconLogout,
+} from "@tabler/icons-react"
 
 const AccountNav = ({
   customer,
@@ -19,10 +26,30 @@ const AccountNav = ({
   }
 
   const navItems = [
-    { href: "/account", label: "Overview", icon: "ti-layout-dashboard", exact: true },
-    { href: "/account/profile", label: "Profile", icon: "ti-user", exact: false },
-    { href: "/account/addresses", label: "Addresses", icon: "ti-map-pin", exact: false },
-    { href: "/account/orders", label: "Orders", icon: "ti-shopping-bag", exact: false },
+    {
+      href: "/account",
+      label: "Overview",
+      icon: <IconLayoutDashboard size={18} />,
+      exact: true,
+    },
+    {
+      href: "/account/profile",
+      label: "Profile",
+      icon: <IconUser size={18} />,
+      exact: false,
+    },
+    {
+      href: "/wishlist",
+      label: "Wishlist",
+      icon: <IconHeart size={18} />,
+      exact: false,
+    },
+    {
+      href: "/account/orders",
+      label: "Orders",
+      icon: <IconShoppingBag size={18} />,
+      exact: false,
+    },
   ]
 
   return (
@@ -45,12 +72,8 @@ const AccountNav = ({
                 : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
             )}
           >
-            <i
-              className={`ti ${item.icon}`}
-              style={{ fontSize: "15px" }}
-              aria-hidden="true"
-            />
-            {item.label}
+            {item.icon}
+            <span>{item.label}</span>
           </LocalizedClientLink>
         )
       })}
@@ -62,8 +85,8 @@ const AccountNav = ({
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors duration-150"
           data-testid="logout-button"
         >
-          <i className="ti ti-logout" style={{ fontSize: "15px" }} aria-hidden="true" />
-          Log out
+          <IconLogout size={18} />
+          <span>Log out</span>
         </button>
       </div>
     </nav>

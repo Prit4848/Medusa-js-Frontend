@@ -30,7 +30,8 @@ export default async function OrderConfirmedPage({
 }: {
   params: { id: string }
 }) {
-  const order = await getOrder(params.id)
+  const { id } = await params as { id: string }
+  const order = await getOrder(id)
   if (!order) return notFound()
 
   const subtotal = order.item_subtotal ?? 0

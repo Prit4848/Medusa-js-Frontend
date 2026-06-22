@@ -23,7 +23,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
       regions
         ?.map((region) => {
           return region.countries?.map((country) => ({
-            value: country.iso_2,
+            value: (country.iso_2 || "").toLowerCase(),
             label: country.display_name,
           }))
         })
@@ -68,7 +68,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
     const country =
       regionOptions?.find(
-        (country) => country?.value === billingAddress.country_code
+        (country) => country?.value === billingAddress.country_code?.toLowerCase()
       )?.label || billingAddress.country_code?.toUpperCase()
 
     return (
@@ -169,7 +169,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
           />
           <NativeSelect
             name="country_code"
-            defaultValue={billingAddress?.country_code || undefined}
+            defaultValue={billingAddress?.country_code?.toLowerCase() || undefined}
             required
             data-testid="billing-country-code-select"
           >

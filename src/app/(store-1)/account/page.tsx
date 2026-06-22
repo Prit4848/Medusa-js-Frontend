@@ -17,7 +17,9 @@ export default async function AccountPage() {
     redirect("/login")
   }
 
-  const orders = await listOrders(5)
+  // Fetch one more than we display so the overview can indicate "more orders"
+  const ORDERS_TO_DISPLAY = 5
+  const orders = await listOrders(ORDERS_TO_DISPLAY + 1)
 
   return (
     <AccountLayout customer={customer as any}>

@@ -7,10 +7,9 @@ import { HttpTypes } from "@medusajs/types"
 
 const CountrySelect = forwardRef<
   HTMLSelectElement,
-  NativeSelectProps & {
-    region?: HttpTypes.StoreRegion
-  }
->(({ placeholder = "Country", region, defaultValue, ...props }, ref) => {
+  NativeSelectProps & { region?: HttpTypes.StoreRegion }
+>(
+  ({ placeholder = "Country", region, defaultValue, value, ...props }, ref) => {
   const innerRef = useRef<HTMLSelectElement>(null)
 
   useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
@@ -24,7 +23,7 @@ const CountrySelect = forwardRef<
     }
 
     return region.countries?.map((country) => ({
-      value: country.iso_2,
+      value: (country.iso_2 || "").toLowerCase(),
       label: country.display_name,
     }))
   }, [region])
@@ -33,7 +32,8 @@ const CountrySelect = forwardRef<
     <NativeSelect
       ref={innerRef}
       placeholder={placeholder}
-      defaultValue={defaultValue}
+      defaultValue={(defaultValue as string | undefined)?.toLowerCase()}
+      value={(value as string | undefined)?.toLowerCase()}
       {...props}
     >
       {countryOptions?.map(({ value, label }, index) => (

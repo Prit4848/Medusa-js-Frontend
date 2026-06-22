@@ -1,60 +1,78 @@
-import { Heart } from "lucide-react";
-import Link from "next/link";
+"use client"
+
+import Link from "next/link"
 
 interface PaymentMethodsProps {
-  selected: string;
-  providers: any[];
+  selected: string
+  providers: any[]
 }
 
-const mapProviderTitle = (id: string) => {
-  if (id.includes("stripe")) return "Credit Card";
-  if (id.includes("manual")) return "Cash";
-  return id.charAt(0).toUpperCase() + id.slice(1).replace(/_/g, " ");
-};
+type Method = { id: string; title: string }
+
+/* Only show two payment methods: Credit Card (maps to a real provider) and Cash/manual. */
+function buildMethods(providers: any[]): Method[] {
+  const creditId =
+    providers.find((p) => p.id.includes("stripe") || p.id.includes("credit"))?.id ||
+    providers.find((p) => !p.id.includes("manual") && !p.id.includes("cash"))?.id ||
+    providers[0]?.id ||
+    "stripe"
+
+  const cashId =
+    providers.find((p) => p.id.includes("manual") || p.id.includes("cash"))?.id ||
+    "manual"
+
+  return [
+    { id: creditId, title: "Credit Card" },
+    { id: cashId,   title: "Cash" },
+  ]
+}
+
+function HeartIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#bd744c"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  )
+}
 
 export default function PaymentMethods({ selected, providers }: PaymentMethodsProps) {
-  // If no providers from backend, fallback to some defaults to avoid empty UI
-  const displayMethods = providers.length > 0 
-    ? providers.map(p => ({ id: p.id, title: mapProviderTitle(p.id) }))
-    : [
-        { id: "credit-card", title: "Credit Card" },
-        { id: "cash", title: "Cash" },
-      ];
+  const methods = buildMethods(providers)
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {displayMethods.map((method) => {
-        const active = selected === method.id;
-
+    <div className="grid grid-cols-2" style={{ border: "1px solid #e0e0e0" }}>
+      {methods.map((method, idx) => {
+        const active = selected === method.id
+        const isLast = idx === methods.length - 1
         return (
           <Link
             key={method.id}
             href={`?payment_method=${method.id}`}
             scroll={false}
-            className="flex items-center justify-center gap-2 bg-white transition-all duration-150 hover:border-[#c27a4a]"
+            className="flex items-center justify-center gap-3 bg-white transition-colors duration-150"
             style={{
-              height: "58px",
-              border: active ? "1px solid #c27a4a" : "1px solid #e0e0e0",
-              borderRadius: 0,
+              height: "80px",
+              borderRight: isLast ? "none" : "1px solid #e0e0e0",
+              outline: active ? "2px solid #bd744c" : "none",
+              outlineOffset: "-2px",
+              textDecoration: "none",
             }}
           >
-            <Heart
-              size={20}
-              strokeWidth={1.5}
-              style={{ color: "#c27a4a" }}
-            />
-            <span
-              style={{
-                fontSize: "14px",
-                fontWeight: 500,
-                color: "#222",
-              }}
-            >
+            <HeartIcon active={active} />
+            <span style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a" }}>
               {method.title}
             </span>
           </Link>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

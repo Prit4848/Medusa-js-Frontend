@@ -483,8 +483,14 @@ export async function checkoutAction(currentState: unknown, formData: FormData) 
 
     if (payment_providers && payment_providers.length > 0) {
       // Find provider matching user selection, or fallback to first
-      const provider = payment_providers.find(p => p.id === selected_payment_id) || payment_providers[0];
-      await sdk.store.payment.initiatePaymentSession(cart, { provider_id: provider.id }, {}, headers)
+      const provider = payment_providers.find((p) => p.id === selected_payment_id) || payment_providers[0]
+
+      // If the chosen provider is a manual/cash type, skip initiating a payment session.
+      // For real payment providers (stripe, credit, etc.) we still initiate the session.
+      const idLower = (provider?.id || "").toLowerCase()
+      if (!idLower.includes("manual") && !idLower.includes("cash")) {
+        await sdk.store.payment.initiatePaymentSession(cart, { provider_id: provider.id }, {}, headers)
+      }
     }
 
     // 4. Place Order

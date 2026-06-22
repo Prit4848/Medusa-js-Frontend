@@ -3,6 +3,7 @@
 import { useState } from "react"
 
 type CountryOption = { value: string; label: string }
+
 type Address = {
   id: string
   first_name?: string
@@ -37,12 +38,9 @@ export default function BillingForm({
   addresses,
   defaultAddress,
 }: BillingFormProps) {
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(
-    defaultAddress
-  )
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(defaultAddress)
   const [showAddressPicker, setShowAddressPicker] = useState(false)
 
-  // Controlled field state — initialized from defaultAddress or customer
   const [fields, setFields] = useState({
     first_name: defaultAddress?.first_name || customer.first_name || "",
     country_code: defaultAddress?.country_code || defaultCountryCode,
@@ -51,13 +49,13 @@ export default function BillingForm({
     address_2: defaultAddress?.address_2 || "",
     postal_code: defaultAddress?.postal_code || "",
     phone: defaultAddress?.phone || customer.phone || "",
+    zip_code: "",
     email: customer.email || "",
   })
 
   const handleAddressSelect = (addr: Address) => {
     setSelectedAddress(addr)
     setShowAddressPicker(false)
-    // Update ALL fields when address changes
     setFields({
       first_name: addr.first_name || customer.first_name || "",
       country_code: addr.country_code || defaultCountryCode,
@@ -66,72 +64,63 @@ export default function BillingForm({
       address_2: addr.address_2 || "",
       postal_code: addr.postal_code || "",
       phone: addr.phone || customer.phone || "",
+      zip_code: "",
       email: customer.email || "",
     })
   }
 
-  const handleChange = (field: keyof typeof fields) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setFields((prev) => ({ ...prev, [field]: e.target.value }))
-  }
+  const handleChange =
+    (field: keyof typeof fields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setFields((prev) => ({ ...prev, [field]: e.target.value }))
+    }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-[#1a1a1a] font-bold" style={{ fontSize: "22px" }}>
-          Billing Address
-        </h2>
-
-        {addresses.length > 0 && (
+      {/* Saved address picker toggle */}
+      {addresses.length > 0 && (
+        <div className="flex items-center justify-between mb-5">
+          <span style={{ fontSize: "13px", color: "#888" }}>
+            {addresses.length} saved address{addresses.length > 1 ? "es" : ""}
+          </span>
           <button
             type="button"
             onClick={() => setShowAddressPicker((p) => !p)}
-            className="text-sm text-[#c27a4a] hover:underline"
+            style={{ fontSize: "13px", color: "#bd744c" }}
+            className="hover:underline"
           >
-            {showAddressPicker
-              ? "Hide"
-              : addresses.length > 1
-              ? "Change address"
-              : "View saved address"}
+            {showAddressPicker ? "Hide" : addresses.length > 1 ? "Change address" : "Use saved address"}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Address picker */}
       {showAddressPicker && addresses.length > 0 && (
-        <div className="mb-6 border border-[#e0e0e0] rounded overflow-hidden">
+        <div className="mb-6 overflow-hidden" style={{ border: "1px solid #e0e0e0" }}>
           {addresses.map((addr) => (
             <button
               key={addr.id}
               type="button"
               onClick={() => handleAddressSelect(addr)}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-[#f0f0f0] last:border-0 transition"
+              className="w-full text-left px-4 py-3 hover:bg-gray-50 transition"
+              style={{ borderBottom: "1px solid #f0f0f0", display: "block" }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-800">
-                    {addr.first_name} {addr.last_name}
+                  <p style={{ fontSize: "13px", fontWeight: 500, color: "#1a1a1a" }}>
+                    {addr.first_name}
                   </p>
-                  <p className="text-xs text-gray-400">
-                    {addr.address_1}, {addr.city},{" "}
-                    {addr.country_code?.toUpperCase()}
+                  <p style={{ fontSize: "12px", color: "#999", marginTop: "2px" }}>
+                    {addr.address_1}, {addr.city}, {addr.country_code?.toUpperCase()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   {addr.is_default_shipping && (
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full"
-                      style={{ background: "#EAF3DE", color: "#3B6D11" }}
-                    >
+                    <span style={{ fontSize: "11px", padding: "2px 8px", background: "#EAF3DE", color: "#3B6D11", borderRadius: "99px" }}>
                       Default
                     </span>
                   )}
                   {selectedAddress?.id === addr.id && (
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full"
-                      style={{ background: "#FAECE7", color: "#993C1D" }}
-                    >
+                    <span style={{ fontSize: "11px", padding: "2px 8px", background: "#FAECE7", color: "#993C1D", borderRadius: "99px" }}>
                       Selected
                     </span>
                   )}
@@ -143,46 +132,44 @@ export default function BillingForm({
       )}
 
       {addresses.length === 0 && (
-        <div
-          className="mb-5 px-4 py-3 text-sm rounded"
-          style={{
-            background: "#FAEEDA",
-            color: "#854F0B",
-            border: "1px solid #FAC775",
-          }}
-        >
+        <div className="mb-5 px-4 py-3" style={{ fontSize: "13px", background: "#FAEEDA", color: "#854F0B", border: "1px solid #FAC775" }}>
           No saved addresses found. Please fill in your details below.
         </div>
       )}
 
-      <div className="space-y-5">
-        {/* First Name */}
+      {/* ── Form layout exactly matching screenshot ── */}
+      <div className="flex flex-col gap-5">
+
+        {/* Row 1: First Name — full width */}
         <Field
-          label="First Name*"
+          label="First Name"
           name="first_name"
+          required
           value={fields.first_name}
           onChange={handleChange("first_name")}
         />
 
-        {/* Country + City */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Row 2: Country + City */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <SelectField
-            label="Country*"
+            label="Country"
             name="country_code"
+            required
             options={countryOptions}
             value={fields.country_code}
             onChange={handleChange("country_code")}
           />
           <Field
-            label="City*"
+            label="City"
             name="city"
+            required
             value={fields.city}
             onChange={handleChange("city")}
           />
         </div>
 
-        {/* Street + Apt */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Row 3: Street + Apt/Suite/Other */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field
             label="Street"
             name="address_1"
@@ -197,8 +184,8 @@ export default function BillingForm({
           />
         </div>
 
-        {/* Postcode + Phone */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Row 4: Postcode + Phone + ZIP Code */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <Field
             label="Postcode"
             name="postal_code"
@@ -212,27 +199,57 @@ export default function BillingForm({
             onChange={handleChange("phone")}
             placeholder="+ 375 (29)"
           />
+          <Field
+            label="ZIP Code"
+            name="zip_code"
+            value={fields.zip_code}
+            onChange={handleChange("zip_code")}
+          />
         </div>
 
-        {/* Email */}
+        {/* Row 5: Email — full width */}
         <Field
-          label="Email*"
+          label="Email"
           name="email"
           type="email"
+          required
           value={fields.email}
           onChange={handleChange("email")}
         />
+
       </div>
     </div>
   )
 }
 
-// Controlled input
+/* ─── Shared styles ─────────────────────────────────────────── */
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: "13px",
+  fontWeight: 400,
+  color: "#222",
+  marginBottom: "6px",
+}
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: "44px",
+  fontSize: "14px",
+  color: "#1a1a1a",
+  background: "#fff",
+  border: "1px solid #d8d8d8",
+  borderRadius: 0,
+  padding: "0 12px",
+  outline: "none",
+}
+
 function Field({
   label,
   name,
   type = "text",
   placeholder = "",
+  required = false,
   value,
   onChange,
 }: {
@@ -240,63 +257,59 @@ function Field({
   name: string
   type?: string
   placeholder?: string
+  required?: boolean
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) {
   return (
     <div>
-      <label
-        className="block text-[#222] mb-1"
-        style={{ fontSize: "13px", fontWeight: 400 }}
-      >
-        {label}
+      <label style={labelStyle}>
+        {label}{required && <span style={{ color: "#bd744c" }}>*</span>}
       </label>
       <input
         type={type}
         name={name}
         placeholder={placeholder}
+        required={required}
         value={value}
         onChange={onChange}
-        className="w-full border border-[#e0e0e0] bg-white px-3 outline-none focus:border-[#c27a4a] transition"
-        style={{ height: "44px", fontSize: "14px" }}
+        style={inputStyle}
+        className="focus:border-[#bd744c] transition-colors"
       />
     </div>
   )
 }
 
-// Controlled select
 function SelectField({
   label,
   name,
+  required = false,
   options,
   value,
   onChange,
 }: {
   label: string
   name: string
+  required?: boolean
   options: CountryOption[]
   value: string
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }) {
   return (
     <div>
-      <label
-        className="block text-[#222] mb-1"
-        style={{ fontSize: "13px", fontWeight: 400 }}
-      >
-        {label}
+      <label style={labelStyle}>
+        {label}{required && <span style={{ color: "#bd744c" }}>*</span>}
       </label>
       <select
         name={name}
+        required={required}
         value={value}
         onChange={onChange}
-        className="w-full border border-[#e0e0e0] bg-white px-3 outline-none focus:border-[#c27a4a] transition"
-        style={{ height: "44px", fontSize: "14px", color: "#444" }}
+        style={{ ...inputStyle, color: "#444" }}
+        className="focus:border-[#bd744c] transition-colors"
       >
         {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
+          <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
     </div>

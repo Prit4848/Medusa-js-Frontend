@@ -4,7 +4,6 @@ import AccountLayout from "@modules/account/templates/account-layout"
 import ProfileName from "@modules/account/components/profile-name"
 import ProfileEmail from "@modules/account/components/profile-email"
 import ProfilePhone from "@modules/account/components/profile-phone"
-import ProfilePassword from "@modules/account/components/profile-password"
 import { notFound, redirect } from "next/navigation"
 
 export const metadata: Metadata = {

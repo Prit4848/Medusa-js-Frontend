@@ -40,19 +40,6 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ customer, children }) => 
           {/* Main content */}
           <div>{children}</div>
         </div>
-
-        {/* Footer strip */}
-        <div className="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium text-gray-900">Got questions?</p>
-          </div>
-          <Link
-            href="/contact"
-            className="text-sm text-[#c97a4a] hover:underline"
-          >
-            Contact Us →
-          </Link>
-        </div>
       </div>
     </div>
   )

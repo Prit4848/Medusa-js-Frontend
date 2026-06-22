@@ -41,7 +41,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
     return regions
       ?.map((r) => {
         return r.countries?.map((c) => ({
-          country: c.iso_2,
+          country: (c.iso_2 || "").toLowerCase(),
           region: r.id,
           label: c.display_name,
         }))
@@ -52,7 +52,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
 
   useEffect(() => {
     if (countryCode) {
-      const option = options?.find((o) => o?.country === countryCode)
+      const option = options?.find((o) => o?.country === countryCode?.toLowerCase())
       setCurrent(option)
     }
   }, [options, countryCode])
@@ -65,14 +65,14 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
   return (
     <div>
       <Listbox
-        as="span"
-        onChange={handleChange}
-        defaultValue={
-          (countryCode
-            ? options?.find((o) => o?.country === countryCode)
-            : undefined) as any
-        }
-      >
+          as="span"
+          onChange={handleChange}
+          defaultValue={
+            (countryCode
+              ? options?.find((o) => o?.country === countryCode?.toLowerCase())
+              : undefined) as any
+          }
+        >
         <ListboxButton className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
             <span>Shipping to:</span>
@@ -85,7 +85,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
                     width: "16px",
                     height: "16px",
                   }}
-                  countryCode={current.country ?? ""}
+                  countryCode={(current.country ?? "").toUpperCase()}
                 />
                 {current.label}
               </span>
@@ -118,7 +118,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
                         width: "16px",
                         height: "16px",
                       }}
-                      countryCode={o?.country ?? ""}
+                      countryCode={(o?.country ?? "").toUpperCase()}
                     />{" "}
                     {o?.label}
                   </ListboxOption>

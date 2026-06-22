@@ -207,7 +207,6 @@ export class MedusaAdapter implements ICommerceAdapter {
       password,
     })
 
-    console.log("LOGIN TOKEN:", token)
 
     return { token: token as string }
   } catch (err) {
@@ -227,7 +226,6 @@ async registerCustomer(data: {
     email: data.email,
     password: data.password,
   })
-  console.log("REGISTER TOKEN:", token)
   const { customer } = await sdk.client.fetch<HttpTypes.StoreCustomerResponse>(
     `/store/customers`,
     {
@@ -254,10 +252,7 @@ async getCustomer(id: string): Promise<Customer | null> {
 
 async getCustomerWithToken(token?: string) {
   try {
-    console.log("TOKEN USED:", token)
-
     const headers: Record<string, string> = {}
-
     if (token) {
       headers["Authorization"] = `Bearer ${token}`
     }
@@ -267,12 +262,9 @@ async getCustomerWithToken(token?: string) {
       { headers }
     )
 
-    console.log("CUSTOMER RESPONSE:", response)
-
     return this.mapCustomer(response.customer)
-  } catch (err) {
-    console.error("CUSTOMER FETCH ERROR:", err)
-    return null
+  } catch {
+    return null 
   }
 }
   private mapProduct(p: HttpTypes.StoreProduct): Product {
