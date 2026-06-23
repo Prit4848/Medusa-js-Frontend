@@ -94,18 +94,6 @@ export default function Overview({ customer, orders }: OverviewProps) {
                 </div>
               </Link>
             ))}
-            {orders.length > VISIBLE_RECENT_ORDERS && (
-              <div className="px-4 py-3">
-                <div className="text-xs text-gray-500 flex items-center justify-between">
-                  <span>
-                    Showing {VISIBLE_RECENT_ORDERS} of {orders.length} orders
-                  </span>
-                  <Link href="/account/orders" className="text-xs text-[#c97a4a] hover:underline">
-                    View all
-                  </Link>
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 gap-2">
